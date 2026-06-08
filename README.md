@@ -54,6 +54,48 @@ docs/
 The stack is recorded so the specs are concrete; it is not a commitment.
 Swap-out notes live in [`docs/01-architecture.md`](docs/01-architecture.md).
 
+## Phase 1 scaffold (Model A)
+
+A working scaffold for **Model A** (consumer BNPL via Stripe) now lives
+alongside the docs. It is the start of the Phase 1 MVP in
+[`docs/07-roadmap.md`](docs/07-roadmap.md): a merchant creates a payment link, a
+customer pays over time via Klarna/Affirm through Stripe, and the merchant is
+funded in full, with an append-only ledger as the system of record.
+
+```
+prisma/schema.prisma          Model A subset + append-only ledger
+src/lib/                      money (cents/bps), ledger, prisma, stripe (lazy), token, http
+src/domain/partners/         PartnerAdapter interface + bnpl-stripe (Model A) adapter
+src/app/api/                 links, pay/[token], pay/[token]/checkout, webhooks/stripe
+src/app/                     minimal landing page
+tests/                       vitest unit tests (money, ledger)
+```
+
+### Run it locally
+
+```bash
+npm install
+cp .env.example .env.local      # fill in DATABASE_URL + Stripe keys
+npx prisma generate
+npx prisma migrate dev          # needs a Postgres database
+npm run dev                     # http://localhost:3000
+```
+
+### Checks
+
+```bash
+npm run typecheck   # tsc --noEmit
+npm test            # vitest (money + ledger)
+npm run build       # next build
+```
+
+CI runs all three on every PR (see `.github/workflows/ci.yml`).
+
+> **Status:** scaffold, not production. Auth is stubbed (merchant id is passed
+> explicitly with `TODO(auth)` markers), and Stripe/partner calls require real
+> credentials and a database to exercise end to end. Models B and C are not yet
+> wired (Phases 2–3).
+
 ---
 
 > **Not legal or financial advice.** Anything involving advancing funds,

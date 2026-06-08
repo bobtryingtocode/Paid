@@ -26,5 +26,9 @@ yarn-error.log*
 .vscode/
 *.swp
 
+# TypeScript / Next.js generated
+next-env.d.ts
+*.tsbuildinfo
+
 # Prisma
 prisma/*.db
