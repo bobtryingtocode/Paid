@@ -42,7 +42,10 @@ Stripe is the money-movement layer for the whole product.
 - **Webhooks:** `/api/webhooks/stripe` — verify signature, persist raw event,
   translate to ledger events. Critical events: checkout/payment_intent
   succeeded (A funding), charge/payment_intent succeeded on connected account
-  (C sales → sweep), payout events (merchant funding visibility).
+  (C sales → sweep), and `payout.paid` (settlement to the seller's bank →
+  `payout.paid` journey event). This is a **Connect** endpoint (events on
+  connected accounts). Full event list, secrets, and Stripe CLI commands:
+  [`16-stripe-webhook-setup.md`](16-stripe-webhook-setup.md).
 
 Secrets: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, Connect client config.
 Never `NEXT_PUBLIC_*`.

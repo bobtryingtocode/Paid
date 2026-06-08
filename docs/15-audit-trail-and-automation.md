@@ -69,5 +69,6 @@ Sheet, post to Slack, etc.). No PII leaves Cadence.
 - `AuditEvent` is append-only — corrections are new events, never edits.
 - `detail` must stay non-PII; the test in `tests/audit-events.test.ts` guards the
   payload shape against PII field names.
-- To receive `payout.paid`, enable that event on your Stripe webhook endpoint
-  (the handler maps `event.account` → merchant).
+- To receive `payout.paid`, enable that event on your **Connect** Stripe webhook
+  endpoint (the handler maps `event.account` → merchant). Full setup:
+  [`16-stripe-webhook-setup.md`](16-stripe-webhook-setup.md).

@@ -54,6 +54,7 @@ docs/
   13-buyer-facing-payments.md Seller payment offerings + the hosted buyer pay page
   14-bills-pdf-email.md       Generate the bill PDF + email it to the customer
   15-audit-trail-and-automation.md  Audit log, transaction journey, Zapier (non-PII) webhooks
+  16-stripe-webhook-setup.md  Stripe webhook endpoints, events (incl. payout.paid), secrets
 ```
 
 ## Proposed stack (assumption for these docs)
