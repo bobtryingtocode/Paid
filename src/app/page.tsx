@@ -11,6 +11,10 @@ export default function Home() {
         full. See <code>docs/</code> for the architecture and{" "}
         <code>src/app/api/</code> for the API.
       </p>
+      <p style={{ display: "flex", gap: "1rem" }}>
+        <a href="/login" style={{ color: "#111" }}>Sign in</a>
+        <a href="/billing" style={{ color: "#111" }}>Plans &amp; usage</a>
+      </p>
       <ul style={{ color: "#666", lineHeight: 1.7 }}>
         <li>
           <code>POST /api/links</code> — create a payment link

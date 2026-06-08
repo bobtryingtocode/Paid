@@ -5,6 +5,7 @@ import { extractInvoiceFromPdf, extractInvoiceFromText } from "@/agent/invoice/e
 import { runProcureToPayAgent } from "@/agent/p2p/agent";
 import { UsageMeter } from "@/billing/usage";
 import { checkCapacity, recordUsage } from "@/billing/entitlements";
+import { currentMerchantId } from "@/auth";
 
 export const runtime = "nodejs";
 // Agent runs can take a while (extraction + multi-turn tool loop).
@@ -12,8 +13,6 @@ export const maxDuration = 300;
 
 const BodySchema = z
   .object({
-    // TODO(auth): derive merchantId from the authenticated session.
-    merchantId: z.string().min(1),
     pdfBase64: z.string().optional(),
     text: z.string().optional(),
     invoice: CanonicalInvoiceSchema.optional(),
@@ -33,6 +32,9 @@ const BodySchema = z
  * plan, schedule payments, and post reconciling journal entries.
  */
 export async function POST(req: Request) {
+  const merchantId = await currentMerchantId();
+  if (!merchantId) return error("unauthorized", "Sign in required", 401);
+
   let raw: unknown;
   try {
     raw = await req.json();
@@ -44,7 +46,7 @@ export async function POST(req: Request) {
   if (!parsed.success) {
     return error("validation_error", parsed.error.issues[0]?.message ?? "Invalid input");
   }
-  const { merchantId, pdfBase64, text, invoice } = parsed.data;
+  const { pdfBase64, text, invoice } = parsed.data;
 
   // Capacity gate (hard block) — refuse before spending any tokens.
   const capacity = await checkCapacity(merchantId);

@@ -40,6 +40,7 @@ docs/
   08-compliance-notes.md   The orchestration-vs-lender line; what keeps us out of regulation
   09-procure-to-pay-agent.md  The in-app invoice agent (PDF → plan → schedule → reconcile)
   10-metering-and-billing.md  Sell the agent: per-token capacity + Stripe subscriptions
+  11-auth-and-billing-ui.md   Auth.js (NextAuth) + the pricing/usage page
 ```
 
 ## Proposed stack (assumption for these docs)
@@ -139,10 +140,23 @@ src/app/api/billing/*         checkout, subscription summary
 src/app/api/webhooks/stripe-billing  subscription lifecycle → local Subscription
 ```
 
-`POST /api/agent/p2p` is gated: it requires `merchantId`, refuses with 402 when
-over quota, and records the run's real token usage. **Reselling note:** sell the
-agent-with-capacity, not raw Claude token passthrough — see
-[`docs/08`](docs/08-compliance-notes.md) and confirm with Anthropic before launch.
+`POST /api/agent/p2p` is gated: it refuses with 402 when over quota and records
+the run's real token usage. **Reselling note:** sell the agent-with-capacity,
+not raw Claude token passthrough — see [`docs/08`](docs/08-compliance-notes.md)
+and confirm with Anthropic before launch.
+
+## Auth & customer UI
+
+Authentication is **Auth.js (NextAuth v5)** — a Credentials provider over the
+`Merchant` table with JWT sessions; the signed-in merchant id is resolved
+server-side via `currentMerchantId()`. Protected routes (`/api/links`,
+`/api/agent/p2p`, `/api/billing/*`) now derive the merchant from the session and
+return 401 when signed out (the `TODO(auth)` stubs are gone). Full design:
+[`docs/11-auth-and-billing-ui.md`](docs/11-auth-and-billing-ui.md).
+
+- **`/login`** — sign-in / sign-up (`POST /api/auth/signup` + NextAuth credentials)
+- **`/billing`** — auth-gated pricing + live usage bar (used / allowance / remaining)
+- Env: `AUTH_SECRET` (session signing secret)
 
 ---
 
