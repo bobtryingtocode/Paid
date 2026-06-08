@@ -51,6 +51,7 @@ docs/
   10-metering-and-billing.md  Sell the agent: per-token capacity + Stripe subscriptions
   11-auth-and-billing-ui.md   Auth.js (NextAuth) + the pricing/usage page
   12-local-dev-and-demo.md    Run locally, seed demo data, the smoke test
+  13-buyer-facing-payments.md Seller payment offerings + the hosted buyer pay page
 ```
 
 ## Proposed stack (assumption for these docs)
@@ -177,6 +178,11 @@ return 401 when signed out (the `TODO(auth)` stubs are gone). Full design:
   hosted onboarding link, and live status (charges/payouts enabled). Routes:
   `POST /api/merchants/me/stripe/onboard`, `GET /api/merchants/me`. Funds route
   `partner → Stripe → merchant`; Cadence never holds funds.
+- **`/settings/payments`** — seller toggles buyer-facing offerings (Klarna
+  pay-over-time / card / subscription). The hosted **`/pay/[token]`** buyer page
+  renders only the enabled methods and routes to Stripe Checkout on the seller's
+  connected account (seller paid directly). See
+  [`docs/13-buyer-facing-payments.md`](docs/13-buyer-facing-payments.md).
 - **`/agent`** — upload a PDF invoice (or paste text) and run the procure-to-pay
   agent; shows the recommended plan, schedule, reconciliation, and token usage.
   Capacity-gated (links to `/billing` on 402).

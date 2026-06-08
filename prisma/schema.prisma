@@ -38,14 +38,29 @@ enum LedgerKind {
 }
 
 model Merchant {
-  id              String        @id @default(cuid())
+  id              String                   @id @default(cuid())
   name            String
-  email           String        @unique
+  email           String                   @unique
   passwordHash    String? // set at signup; used by the Credentials auth provider
-  stripeAccountId String?       @unique // Stripe Connect account
-  createdAt       DateTime      @default(now())
+  stripeAccountId String?                  @unique // Stripe Connect account
+  createdAt       DateTime                 @default(now())
   paymentLinks    PaymentLink[]
   subscription    Subscription?
+  paymentSettings MerchantPaymentSettings?
+}
+
+// Which payment methods a seller offers buyers on the hosted pay page. The
+// buyer page renders only the enabled options. Payouts settle to the seller's
+// Stripe Connect account (its bank held by Stripe), so no bank numbers here.
+model MerchantPaymentSettings {
+  id                  String   @id @default(cuid())
+  merchantId          String   @unique
+  merchant            Merchant @relation(fields: [merchantId], references: [id])
+  offerCard           Boolean  @default(true) // pay now, card/debit
+  offerPayOverTime    Boolean  @default(true) // Klarna/Affirm via Stripe; seller paid in full
+  offerSubscription   Boolean  @default(false) // ongoing service
+  subscriptionPriceId String? // Stripe Price on the seller's connected account
+  updatedAt           DateTime @updatedAt
 }
 
 enum SubscriptionStatus {

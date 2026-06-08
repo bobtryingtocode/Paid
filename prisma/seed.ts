@@ -56,6 +56,18 @@ async function main() {
     },
   });
 
+  // Buyer-facing payment offerings (pay-over-time + card; subscription off)
+  await prisma.merchantPaymentSettings.upsert({
+    where: { merchantId: merchant.id },
+    update: {},
+    create: {
+      merchantId: merchant.id,
+      offerCard: true,
+      offerPayOverTime: true,
+      offerSubscription: false,
+    },
+  });
+
   // A sample open payment link (Model A)
   await prisma.paymentLink.upsert({
     where: { token: "demo-link-token" },
