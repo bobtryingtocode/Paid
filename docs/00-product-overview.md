@@ -13,6 +13,30 @@ pays over time, with the financing partner carrying the risk.
 - **The payer** — a consumer, a business buyer, or (in the inventory model) the
   business itself, repaying out of sales.
 
+## Positioning — who this is for
+
+**The hero use case is small-business → consumer (B2C).** A customer who would
+otherwise just tap a credit card is instead offered a **Klarna pay-over-time
+plan** at checkout. The crucial difference from a plain card charge:
+
+- The business is **paid in full today**; Klarna carries the repayment risk
+  (non-recourse).
+- It's a **checkout choice, not a financing application** — the shop needs **no
+  new bank or lender relationship** and no internal credit process. Turn it on
+  and offer it like any other payment method.
+- For the consumer it lowers the barrier to buy (Pay-in-4 / monthly), which tends
+  to lift conversion and basket size versus card-only.
+
+This is **Model A**, and it's the wedge: the everyday B2C product or service that
+a consumer normally pays for by card.
+
+**B2B is the heavier, bank/lender-style path — secondary.** When the payer is
+another business, its internal procurement / accounts-payable processes usually
+require **net terms or a lender-style arrangement** rather than a consumer BNPL
+button. That's **Model B** (Net 30/60/90) and **Model C** (make-&-sell inventory
+financing) — more setup, larger tickets, slower cycles. Lead with the B2C/Klarna
+wedge; reach for the bank/lender path when a business buyer's process demands it.
+
 ## The one decision that changes everything
 
 > **Do not become the lender or the money-mover.**

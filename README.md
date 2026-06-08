@@ -6,6 +6,15 @@ Cadence is a payment-link app (iOS + web) that lets small businesses get paid
 **in full today** while their customer — or their own buyer, or their inventory
 itself — pays over time, with a **financing partner carrying the risk**.
 
+**Who it's for (positioning):** the hero use case is **small-business → consumer
+(B2C)** — a customer who'd otherwise just tap a credit card is instead offered a
+**Klarna pay-over-time plan** at checkout. The business is paid in full now,
+Klarna carries the risk, and there's **no new bank/lender relationship** — it's a
+checkout choice, not a financing application (Model A). The **B2B** side is the
+heavier **bank/lender-style** path (net terms / inventory financing) for buyers
+whose internal processes require it (Models B & C). See
+[`docs/00-product-overview.md`](docs/00-product-overview.md).
+
 Cadence is an **orchestration layer**, not a lender. It never holds, lends, or
 moves customer money on its own balance sheet. It plugs into embedded-capital
 and BNPL partners who hold the license, the capital, the underwriting, and the

@@ -3,13 +3,15 @@ export default function Home() {
     <main style={{ maxWidth: 680, margin: "0 auto", padding: "4rem 1.5rem" }}>
       <h1 style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>Cadence</h1>
       <p style={{ fontSize: "1.1rem", color: "#444", marginTop: 0 }}>
-        Get the maker paid now. Let the business repay as it sells.
+        Let your customers pay over time with Klarna — and get paid in full today.
       </p>
       <p style={{ color: "#666" }}>
-        Phase 1 (Model A): a merchant creates a payment link, the customer pays
-        over time via Klarna/Affirm through Stripe, and the merchant is funded in
-        full. See <code>docs/</code> for the architecture and{" "}
-        <code>src/app/api/</code> for the API.
+        For small businesses selling to consumers: instead of just a credit-card
+        charge, offer a Klarna pay-over-time plan at checkout. You&apos;re funded
+        in full now, Klarna carries the risk, and there&apos;s no new bank or
+        lender relationship to set up — it&apos;s a checkout choice, not a
+        financing application. (Business buyers whose internal processes need net
+        terms or a lender-style arrangement get the heavier B2B path.)
       </p>
       <p style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
         <a href="/login" style={{ color: "#111" }}>Sign in</a>
