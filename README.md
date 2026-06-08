@@ -155,6 +155,13 @@ return 401 when signed out (the `TODO(auth)` stubs are gone). Full design:
 [`docs/11-auth-and-billing-ui.md`](docs/11-auth-and-billing-ui.md).
 
 - **`/login`** — sign-in / sign-up (`POST /api/auth/signup` + NextAuth credentials)
+- **`/onboarding`** — Stripe **Connect** onboarding: create the connected account,
+  hosted onboarding link, and live status (charges/payouts enabled). Routes:
+  `POST /api/merchants/me/stripe/onboard`, `GET /api/merchants/me`. Funds route
+  `partner → Stripe → merchant`; Cadence never holds funds.
+- **`/agent`** — upload a PDF invoice (or paste text) and run the procure-to-pay
+  agent; shows the recommended plan, schedule, reconciliation, and token usage.
+  Capacity-gated (links to `/billing` on 402).
 - **`/billing`** — auth-gated pricing + live usage bar (used / allowance / remaining)
 - Env: `AUTH_SECRET` (session signing secret)
 

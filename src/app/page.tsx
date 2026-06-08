@@ -11,8 +11,10 @@ export default function Home() {
         full. See <code>docs/</code> for the architecture and{" "}
         <code>src/app/api/</code> for the API.
       </p>
-      <p style={{ display: "flex", gap: "1rem" }}>
+      <p style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
         <a href="/login" style={{ color: "#111" }}>Sign in</a>
+        <a href="/onboarding" style={{ color: "#111" }}>Get paid (Stripe)</a>
+        <a href="/agent" style={{ color: "#111" }}>Process an invoice</a>
         <a href="/billing" style={{ color: "#111" }}>Plans &amp; usage</a>
       </p>
       <ul style={{ color: "#666", lineHeight: 1.7 }}>
