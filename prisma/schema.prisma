@@ -1,0 +1,189 @@
+// Cadence — Phase 1 (Model A) Prisma schema.
+// Focused on the consumer-BNPL-via-Stripe flow plus the append-only ledger.
+// Models B and C entities (see docs/04-data-model.md) are added in later phases.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  // Supabase: pooled connection (Supavisor, port 6543) for the app at runtime;
+  // direct connection (port 5432) for migrations. See docs/12.
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum MoneyModel {
+  CONSUMER // A — the only model wired in Phase 1
+  B2B_TERMS // B — Phase 2
+  MAKE_SELL // C — Phase 3
+}
+
+enum PartnerKind {
+  BNPL_STRIPE // Klarna / Affirm via Stripe (A)
+  RESOLVE // B — Phase 2
+  EMBEDDED_CAPITAL // C — Phase 3
+}
+
+enum LinkStatus {
+  DRAFT
+  OPEN
+  FUNDED
+  EXPIRED
+  CANCELLED
+}
+
+enum LedgerKind {
+  FUNDING // partner funds the merchant in full (Model A)
+  FEE // Cadence's share of the partner fee
+  ADJUSTMENT // corrections (append-only; never edit prior rows)
+}
+
+model Merchant {
+  id              String                   @id @default(cuid())
+  name            String
+  email           String                   @unique
+  passwordHash    String? // set at signup; used by the Credentials auth provider
+  stripeAccountId String?                  @unique // Stripe Connect account
+  createdAt       DateTime                 @default(now())
+  paymentLinks    PaymentLink[]
+  subscription    Subscription?
+  paymentSettings MerchantPaymentSettings?
+}
+
+// Which payment methods a seller offers buyers on the hosted pay page. The
+// buyer page renders only the enabled options. Payouts settle to the seller's
+// Stripe Connect account (its bank held by Stripe), so no bank numbers here.
+model MerchantPaymentSettings {
+  id                  String   @id @default(cuid())
+  merchantId          String   @unique
+  merchant            Merchant @relation(fields: [merchantId], references: [id])
+  offerCard           Boolean  @default(true) // pay now, card/debit
+  offerPayOverTime    Boolean  @default(true) // Klarna/Affirm via Stripe; seller paid in full
+  offerSubscription   Boolean  @default(false) // ongoing service
+  subscriptionPriceId String? // Stripe Price on the seller's connected account
+  updatedAt           DateTime @updatedAt
+}
+
+enum SubscriptionStatus {
+  INCOMPLETE
+  ACTIVE
+  PAST_DUE
+  CANCELED
+}
+
+// A merchant's plan subscription. Capacity is metered in Claude tokens per
+// billing period; see src/billing. Billing periods mirror the Stripe subscription.
+model Subscription {
+  id                   String             @id @default(cuid())
+  merchantId           String             @unique
+  merchant             Merchant           @relation(fields: [merchantId], references: [id])
+  planSlug             String // "starter" | "pro" | "scale" (see src/billing/plans.ts)
+  status               SubscriptionStatus @default(INCOMPLETE)
+  stripeCustomerId     String?            @unique
+  stripeSubscriptionId String?            @unique
+  currentPeriodStart   DateTime?
+  currentPeriodEnd     DateTime?
+  createdAt            DateTime           @default(now())
+  usagePeriods         UsagePeriod[]
+}
+
+// Cumulative token usage for one subscription within one billing period.
+// Enforcement reads totalTokens against the plan's allowance (hard block).
+model UsagePeriod {
+  id             String       @id @default(cuid())
+  subscriptionId String
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id])
+  periodStart    DateTime
+  periodEnd      DateTime
+  inputTokens    BigInt       @default(0)
+  outputTokens   BigInt       @default(0)
+  totalTokens    BigInt       @default(0)
+  runs           Int          @default(0)
+
+  @@unique([subscriptionId, periodStart])
+}
+
+model Partner {
+  id           String        @id @default(cuid())
+  kind         PartnerKind
+  displayName  String
+  transactions Transaction[]
+}
+
+model PaymentLink {
+  id          String       @id @default(cuid())
+  merchantId  String
+  merchant    Merchant     @relation(fields: [merchantId], references: [id])
+  model       MoneyModel   @default(CONSUMER)
+  amountCents BigInt
+  currency    String       @default("usd")
+  description String?
+  status      LinkStatus   @default(OPEN)
+  token       String       @unique // public, unguessable URL token
+  expiresAt   DateTime?
+  createdAt   DateTime     @default(now())
+  transaction Transaction?
+
+  @@index([merchantId, status])
+}
+
+model Transaction {
+  id            String        @id @default(cuid())
+  paymentLinkId String        @unique
+  paymentLink   PaymentLink   @relation(fields: [paymentLinkId], references: [id])
+  partnerId     String
+  partner       Partner       @relation(fields: [partnerId], references: [id])
+  amountCents   BigInt // funded to merchant in full
+  feeCents      BigInt        @default(0) // Cadence's share of partner fee
+  fundedAt      DateTime?
+  ledgerEvents  LedgerEvent[]
+}
+
+// The system of record: append-only. Balances are derived from these rows.
+model LedgerEvent {
+  id            String       @id @default(cuid())
+  kind          LedgerKind
+  amountCents   BigInt
+  currency      String       @default("usd")
+  transactionId String?
+  transaction   Transaction? @relation(fields: [transactionId], references: [id])
+  sourceEventId String?      @unique // idempotency: ties to the external event that caused it
+  createdAt     DateTime     @default(now())
+
+  @@index([transactionId, kind])
+}
+
+// Append-only audit trail for the transactional workflow — the PII/audit-compliant
+// system of record. Keyed to a merchant and (usually) a transaction (PaymentLink).
+// `detail` must contain NON-PII only; the same shape is emitted to outbound
+// (Zapier) webhooks. Customer PII lives in its own access-controlled fields, never
+// here. Scalar foreign keys (no relations) keep the log decoupled + append-only.
+model AuditEvent {
+  id            String   @id @default(cuid())
+  merchantId    String
+  paymentLinkId String?
+  type          String // dot-namespaced, e.g. "bill.emailed", "payment.approved"
+  actor         String // "merchant" | "system" | "stripe" | "customer"
+  amountCents   BigInt?
+  currency      String?
+  detail        Json? // NON-PII metadata only
+  createdAt     DateTime @default(now())
+
+  @@index([merchantId, createdAt])
+  @@index([paymentLinkId, createdAt])
+}
+
+// Raw, verified inbound webhooks. Unique on (source, externalId) → idempotent intake.
+model WebhookEvent {
+  id          String    @id @default(cuid())
+  source      String // "stripe" | "resolve" | "embedded_capital"
+  externalId  String
+  payload     Json
+  verifiedAt  DateTime?
+  processedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@unique([source, externalId])
+}
