@@ -41,6 +41,7 @@ docs/
   09-procure-to-pay-agent.md  The in-app invoice agent (PDF → plan → schedule → reconcile)
   10-metering-and-billing.md  Sell the agent: per-token capacity + Stripe subscriptions
   11-auth-and-billing-ui.md   Auth.js (NextAuth) + the pricing/usage page
+  12-local-dev-and-demo.md    Run locally, seed demo data, the smoke test
 ```
 
 ## Proposed stack (assumption for these docs)
@@ -88,11 +89,19 @@ npm run dev                     # http://localhost:3000
 
 ```bash
 npm run typecheck   # tsc --noEmit
-npm test            # vitest (money + ledger)
+npm test            # vitest unit tests
+npm run smoke       # offline procure-to-pay pipeline walkthrough (no DB/keys)
 npm run build       # next build
 ```
 
-CI runs all three on every PR (see `.github/workflows/ci.yml`).
+CI runs all of these on every PR (see `.github/workflows/ci.yml`).
+
+### Demo data
+
+`npm run db:seed` (after `npx prisma migrate dev`) loads a demo merchant
+(`demo@cadence.test` / `password123`) with an active Pro plan and sample data so
+you can click through `/login → /onboarding → /agent → /billing`. Full guide:
+[`docs/12-local-dev-and-demo.md`](docs/12-local-dev-and-demo.md).
 
 > **Status:** scaffold, not production. Auth is stubbed (merchant id is passed
 > explicitly with `TODO(auth)` markers), and Stripe/partner calls require real
