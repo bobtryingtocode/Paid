@@ -1,41 +1,47 @@
 export default function Home() {
   return (
-    <main style={{ maxWidth: 680, margin: "0 auto", padding: "4rem 1.5rem" }}>
-      <h1 style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>Cadence</h1>
-      <p style={{ fontSize: "1.1rem", color: "#444", marginTop: 0 }}>
-        Let your customers pay over time with Klarna — and get paid in full today.
+    <main style={{ maxWidth: 1040, margin: "0 auto", padding: "80px 24px" }}>
+      <div className="paid-wordmark" style={{ fontSize: 22 }}>
+        Paid<span className="dot">.</span>
+      </div>
+
+      <p className="paid-eyebrow" style={{ marginTop: 48 }}>For small shops &amp; service businesses</p>
+      <h1 className="paid-display" style={{ maxWidth: 760, marginTop: 12 }}>
+        Get paid in full today<span style={{ color: "var(--paid)" }}>.</span> Let them pay over time<span style={{ color: "var(--paid)" }}>.</span>
+      </h1>
+      <p className="paid-muted" style={{ fontSize: 17, maxWidth: 620, marginTop: 16 }}>
+        Send a customer a payment link. They choose how to pay — in full, or over
+        time with Klarna. You&apos;re paid in full today; the financing partner
+        carries the risk and the wait. You never become the bank.
       </p>
-      <p style={{ color: "#666" }}>
-        For small businesses selling to consumers: instead of just a credit-card
-        charge, offer a Klarna pay-over-time plan at checkout. You&apos;re funded
-        in full now, Klarna carries the risk, and there&apos;s no new bank or
-        lender relationship to set up — it&apos;s a checkout choice, not a
-        financing application. (Business buyers whose internal processes need net
-        terms or a lender-style arrangement get the heavier B2B path.)
-      </p>
-      <p style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
-        <a href="/login" style={{ color: "#111" }}>Sign in</a>
-        <a href="/onboarding" style={{ color: "#111" }}>Get paid (Stripe)</a>
-        <a href="/settings/payments" style={{ color: "#111" }}>Payment offerings</a>
-        <a href="/bills" style={{ color: "#111" }}>Bills</a>
-        <a href="/transactions" style={{ color: "#111" }}>Transactions</a>
-        <a href="/agent" style={{ color: "#111" }}>Process an invoice</a>
-        <a href="/billing" style={{ color: "#111" }}>Plans &amp; usage</a>
-      </p>
-      <ul style={{ color: "#666", lineHeight: 1.7 }}>
-        <li>
-          <code>POST /api/links</code> — create a payment link
-        </li>
-        <li>
-          <code>GET /api/pay/:token</code> — public payer view
-        </li>
-        <li>
-          <code>POST /api/pay/:token/checkout</code> — start checkout
-        </li>
-        <li>
-          <code>POST /api/webhooks/stripe</code> — funding confirmation
-        </li>
-      </ul>
+
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginTop: 32 }}>
+        <a className="paid-btn paid-btn--primary" href="/login">Sign in</a>
+        <a className="paid-btn paid-btn--ghost" href="/bills">Send a bill</a>
+        <a className="paid-btn paid-btn--ghost" href="/transactions">Transactions</a>
+        <a className="paid-btn paid-btn--ghost" href="/billing">Plans &amp; usage</a>
+      </div>
+
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+          gap: 16,
+          marginTop: 64,
+        }}
+      >
+        {[
+          { e: "Onboarding", t: "Get paid", d: "Connect Stripe so payouts land in your bank.", href: "/onboarding" },
+          { e: "Offerings", t: "Set how they pay", d: "Klarna over time, card, or subscription.", href: "/settings/payments" },
+          { e: "Agent", t: "Process an invoice", d: "Turn a PDF bill into a financing plan.", href: "/agent" },
+        ].map((c) => (
+          <a key={c.t} href={c.href} className="paid-card" style={{ padding: 20, display: "block", color: "inherit" }}>
+            <div className="paid-eyebrow">{c.e}</div>
+            <div className="paid-h2" style={{ marginTop: 8 }}>{c.t}</div>
+            <p className="paid-muted" style={{ marginTop: 6 }}>{c.d}</p>
+          </a>
+        ))}
+      </div>
     </main>
   );
 }
