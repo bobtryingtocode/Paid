@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { generateLinkToken } from "@/lib/token";
 import { ok, error } from "@/lib/http";
 import { currentMerchantId } from "@/auth";
+import { recordEvent } from "@/audit/log";
+import { EVENT_TYPES } from "@/audit/events";
 
 export const runtime = "nodejs";
 
@@ -42,6 +44,16 @@ export async function POST(req: Request) {
       status: "OPEN",
       token: generateLinkToken(),
     },
+  });
+
+  await recordEvent({
+    merchantId,
+    paymentLinkId: link.id,
+    type: EVENT_TYPES.billCreated,
+    actor: "merchant",
+    amountCents,
+    currency,
+    detail: { hasDescription: Boolean(description) },
   });
 
   return ok(link, { status: 201 });

@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { bnplStripeAdapter } from "@/domain/partners/bnpl-stripe";
 import { error } from "@/lib/http";
 import { NextResponse } from "next/server";
+import { recordEvent } from "@/audit/log";
+import { EVENT_TYPES } from "@/audit/events";
 
 export const runtime = "nodejs";
 
@@ -62,6 +64,22 @@ export async function POST(req: Request) {
 }
 
 async function handleEvent(event: Stripe.Event) {
+  if (event.type === "payout.paid") {
+    // A Stripe payout settled to the connected account's bank.
+    const payout = event.data.object as Stripe.Payout;
+    const merchantId = await merchantIdForConnectedAccount(event.account);
+    if (!merchantId) return;
+    await recordEvent({
+      merchantId,
+      type: EVENT_TYPES.payoutPaid,
+      actor: "stripe",
+      amountCents: payout.amount,
+      currency: payout.currency,
+      detail: { arrivalDate: payout.arrival_date, status: payout.status },
+    });
+    return;
+  }
+
   if (
     event.type !== "checkout.session.completed" &&
     event.type !== "payment_intent.succeeded"
@@ -121,4 +139,34 @@ async function handleEvent(event: Stripe.Event) {
     });
     return transaction;
   });
+
+  // Audit + outbound events for the transaction journey (non-PII).
+  await recordEvent({
+    merchantId: link.merchantId,
+    paymentLinkId: link.id,
+    type: EVENT_TYPES.paymentApproved,
+    actor: "stripe",
+    amountCents: funding?.amountCents ?? null,
+    currency: link.currency,
+    detail: { eventType: event.type },
+  });
+  await recordEvent({
+    merchantId: link.merchantId,
+    paymentLinkId: link.id,
+    type: EVENT_TYPES.transactionReconciled,
+    actor: "system",
+    amountCents: funding?.amountCents ?? null,
+    currency: link.currency,
+    detail: { feeCents: fee?.amountCents ?? 0 },
+  });
+}
+
+/** Map a Stripe connected-account id (from event.account) to our merchant. */
+async function merchantIdForConnectedAccount(account?: string): Promise<string | null> {
+  if (!account) return null;
+  const merchant = await prisma.merchant.findUnique({
+    where: { stripeAccountId: account },
+    select: { id: true },
+  });
+  return merchant?.id ?? null;
 }

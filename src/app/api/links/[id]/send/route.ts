@@ -4,6 +4,8 @@ import { ok, error } from "@/lib/http";
 import { currentMerchantId } from "@/auth";
 import { buildBillPdf } from "@/bill/pdf";
 import { sendBillEmail } from "@/notify/mailer";
+import { recordEvent } from "@/audit/log";
+import { EVENT_TYPES } from "@/audit/events";
 
 export const runtime = "nodejs";
 
@@ -60,6 +62,17 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     currency: link.currency,
     payUrl,
     pdf,
+  });
+
+  // Audit + outbound event — note: customer email (PII) is NOT included.
+  await recordEvent({
+    merchantId,
+    paymentLinkId: link.id,
+    type: EVENT_TYPES.billEmailed,
+    actor: "merchant",
+    amountCents,
+    currency: link.currency,
+    detail: { provider: result.provider, delivered: result.delivered },
   });
 
   return ok({ ...result, payUrl });

@@ -53,6 +53,7 @@ docs/
   12-local-dev-and-demo.md    Run locally, seed demo data, the smoke test
   13-buyer-facing-payments.md Seller payment offerings + the hosted buyer pay page
   14-bills-pdf-email.md       Generate the bill PDF + email it to the customer
+  15-audit-trail-and-automation.md  Audit log, transaction journey, Zapier (non-PII) webhooks
 ```
 
 ## Proposed stack (assumption for these docs)
@@ -188,6 +189,11 @@ return 401 when signed out (the `TODO(auth)` stubs are gone). Full design:
   renders only the enabled methods and routes to Stripe Checkout on the seller's
   connected account (seller paid directly). See
   [`docs/13-buyer-facing-payments.md`](docs/13-buyer-facing-payments.md).
+- **`/transactions`** — PII-/audit-compliant transaction journey: per-transaction
+  event timeline + deposit bank (name + last4 from Stripe). Backed by an
+  append-only `AuditEvent` log that also emits **non-PII** events to a Zapier
+  webhook (HMAC-signed) for automation — PII never leaves Cadence. See
+  [`docs/15-audit-trail-and-automation.md`](docs/15-audit-trail-and-automation.md).
 - **`/agent`** — upload a PDF invoice (or paste text) and run the procure-to-pay
   agent; shows the recommended plan, schedule, reconciliation, and token usage.
   Capacity-gated (links to `/billing` on 402).

@@ -155,6 +155,26 @@ model LedgerEvent {
   @@index([transactionId, kind])
 }
 
+// Append-only audit trail for the transactional workflow — the PII/audit-compliant
+// system of record. Keyed to a merchant and (usually) a transaction (PaymentLink).
+// `detail` must contain NON-PII only; the same shape is emitted to outbound
+// (Zapier) webhooks. Customer PII lives in its own access-controlled fields, never
+// here. Scalar foreign keys (no relations) keep the log decoupled + append-only.
+model AuditEvent {
+  id            String   @id @default(cuid())
+  merchantId    String
+  paymentLinkId String?
+  type          String // dot-namespaced, e.g. "bill.emailed", "payment.approved"
+  actor         String // "merchant" | "system" | "stripe" | "customer"
+  amountCents   BigInt?
+  currency      String?
+  detail        Json? // NON-PII metadata only
+  createdAt     DateTime @default(now())
+
+  @@index([merchantId, createdAt])
+  @@index([paymentLinkId, createdAt])
+}
+
 // Raw, verified inbound webhooks. Unique on (source, externalId) → idempotent intake.
 model WebhookEvent {
   id          String    @id @default(cuid())

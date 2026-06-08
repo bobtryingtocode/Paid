@@ -45,6 +45,27 @@ export interface ConnectStatus {
   detailsSubmitted: boolean;
 }
 
+export interface PayoutDestination {
+  bankName: string | null;
+  last4: string | null;
+}
+
+/**
+ * The connected account's default payout bank — the "name of deposit". Stripe
+ * holds the account/routing; we only surface bank name + last4 to the seller.
+ * Returns null if not onboarded or no bank attached yet.
+ */
+export async function getPayoutDestination(merchant: Merchant): Promise<PayoutDestination | null> {
+  if (!merchant.stripeAccountId) return null;
+  const accounts = await getStripe().accounts.listExternalAccounts(merchant.stripeAccountId, {
+    object: "bank_account",
+    limit: 1,
+  });
+  const first = accounts.data[0];
+  if (!first || first.object !== "bank_account") return null;
+  return { bankName: first.bank_name ?? null, last4: first.last4 ?? null };
+}
+
 /** Read the merchant's Connect onboarding status from Stripe. */
 export async function getConnectStatus(merchant: Merchant): Promise<ConnectStatus> {
   if (!merchant.stripeAccountId) {
