@@ -17,12 +17,35 @@ npm run smoke
 Exits non-zero on any failed assertion, so it also runs in CI
 (`.github/workflows/ci.yml`) alongside `typecheck`, `test`, and `build`.
 
+## Database — Supabase
+
+The database is **Supabase** (hosted Postgres). Prisma connects with two URLs:
+
+- `DATABASE_URL` — the **pooled** connection (Supavisor, port 6543, `?pgbouncer=true`),
+  used by the app at runtime.
+- `DIRECT_URL` — the **direct** connection (port 5432), used by Prisma for
+  migrations (`directUrl` in `prisma/schema.prisma`).
+
+Setup:
+
+1. Create a project at [supabase.com](https://supabase.com).
+2. Project Settings → Database → Connection string → copy both the **Transaction**
+   (pooled, 6543) and **Session/Direct** (5432) strings into `DATABASE_URL` and
+   `DIRECT_URL` in `.env.local` (see [`.env.example`](../.env.example)).
+3. Run the migration + seed below — they create the schema and demo data in your
+   Supabase project.
+
+> No app code is Supabase-specific: it's plain Postgres via Prisma, so the schema,
+> migrations, and queries are unchanged. (Supabase Auth/Storage aren't used —
+> auth is Auth.js; if you later want Supabase Storage for PDF bills, add
+> `@supabase/supabase-js` then.)
+
 ## Full local run (database + services)
 
 ```bash
 npm install
-cp .env.example .env.local        # fill in the values below
-npx prisma migrate dev            # create the schema in your Postgres
+cp .env.example .env.local        # fill in DATABASE_URL + DIRECT_URL (Supabase) + the rest
+npx prisma migrate dev            # create the schema in Supabase (uses DIRECT_URL)
 npm run db:seed                   # load demo data (idempotent)
 npm run dev                       # http://localhost:3000
 ```
@@ -53,7 +76,7 @@ empty), and a sample open payment link.
 | Flow | Needs |
 |------|-------|
 | Smoke test | nothing |
-| Sign in / seed / usage bar | `DATABASE_URL`, `AUTH_SECRET` |
+| Sign in / seed / usage bar | `DATABASE_URL` + `DIRECT_URL` (Supabase), `AUTH_SECRET` |
 | Run the agent | `ANTHROPIC_API_KEY` |
 | Connect onboarding & payouts | `STRIPE_SECRET_KEY` |
 | Subscriptions | `STRIPE_PRICE_STARTER/PRO/SCALE`, `STRIPE_BILLING_WEBHOOK_SECRET` |

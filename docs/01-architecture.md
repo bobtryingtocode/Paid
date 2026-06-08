@@ -88,7 +88,7 @@ custody or credit path.
 |-------|--------|-----|
 | Web + API | **Next.js (App Router) + TypeScript** | One shared codebase for web UI and API route handlers; clean server-only boundary (`server` components / route handlers) for secrets and partner calls; the brief explicitly allows one shared codebase to start. |
 | Native iOS (Phase 2) | **React Native / Expo** | Reuses the TypeScript domain core (ledger math, validation, types) and talks to the same backend API. |
-| Database | **PostgreSQL** | Relational integrity for a financial ledger; transactions, constraints, decimal money types. |
+| Database | **Supabase (PostgreSQL)** | Hosted Postgres; relational integrity for a financial ledger. Prisma uses a pooled URL at runtime + a direct URL for migrations (see docs/12). |
 | ORM | **Prisma** | Typed schema shared with the TypeScript app; migrations as code. See [`04-data-model.md`](04-data-model.md). |
 | Money rails | **Stripe Connect** | Routes funds to merchants, presents Klarna/Affirm at checkout, and enables the automatic per-sale sweep (application fees / transfers) in Model C. |
 | Notifications | Email + SMS provider (e.g. Resend/Postmark + Twilio) | Links, receipts, reminders. Provider is interchangeable behind a `Notifier` interface. |

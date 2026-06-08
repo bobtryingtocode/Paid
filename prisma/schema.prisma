@@ -8,7 +8,10 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  // Supabase: pooled connection (Supavisor, port 6543) for the app at runtime;
+  // direct connection (port 5432) for migrations. See docs/12.
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 enum MoneyModel {

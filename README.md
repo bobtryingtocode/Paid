@@ -60,7 +60,7 @@ docs/
   web and API routes, with a clear server-only boundary for secrets and
   partner calls. React Native can reuse the TypeScript core for the Phase 2
   native iOS app.
-- **Database:** PostgreSQL via Prisma ORM — the ledger is the heart of the
+- **Database:** Supabase (hosted PostgreSQL) via Prisma ORM — the ledger is the heart of the
   product and needs a strict relational system of record.
 - **Rails:** Stripe (Connect) for routing money, presenting Klarna/Affirm at
   checkout, and the automatic per-sale sweep in Model C.
