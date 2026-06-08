@@ -44,6 +44,46 @@ model Merchant {
   stripeAccountId String?       @unique // Stripe Connect account
   createdAt       DateTime      @default(now())
   paymentLinks    PaymentLink[]
+  subscription    Subscription?
+}
+
+enum SubscriptionStatus {
+  INCOMPLETE
+  ACTIVE
+  PAST_DUE
+  CANCELED
+}
+
+// A merchant's plan subscription. Capacity is metered in Claude tokens per
+// billing period; see src/billing. Billing periods mirror the Stripe subscription.
+model Subscription {
+  id                   String             @id @default(cuid())
+  merchantId           String             @unique
+  merchant             Merchant           @relation(fields: [merchantId], references: [id])
+  planSlug             String // "starter" | "pro" | "scale" (see src/billing/plans.ts)
+  status               SubscriptionStatus @default(INCOMPLETE)
+  stripeCustomerId     String?            @unique
+  stripeSubscriptionId String?            @unique
+  currentPeriodStart   DateTime?
+  currentPeriodEnd     DateTime?
+  createdAt            DateTime           @default(now())
+  usagePeriods         UsagePeriod[]
+}
+
+// Cumulative token usage for one subscription within one billing period.
+// Enforcement reads totalTokens against the plan's allowance (hard block).
+model UsagePeriod {
+  id             String       @id @default(cuid())
+  subscriptionId String
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id])
+  periodStart    DateTime
+  periodEnd      DateTime
+  inputTokens    BigInt       @default(0)
+  outputTokens   BigInt       @default(0)
+  totalTokens    BigInt       @default(0)
+  runs           Int          @default(0)
+
+  @@unique([subscriptionId, periodStart])
 }
 
 model Partner {

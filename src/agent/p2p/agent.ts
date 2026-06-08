@@ -1,6 +1,7 @@
 import type Anthropic from "@anthropic-ai/sdk";
 import { AGENT_MODEL, createMessage, messageText } from "@/agent/anthropic";
 import type { CanonicalInvoice } from "@/agent/invoice/schema";
+import type { UsageMeter } from "@/billing/usage";
 import { P2P_TOOLS, executeP2PTool, summarize, type RunContext } from "./tools";
 
 const SYSTEM = `You are a procure-to-pay agent for project-cost invoices. Given a
@@ -30,6 +31,7 @@ export interface ProcureToPayResult {
  */
 export async function runProcureToPayAgent(
   invoice: CanonicalInvoice,
+  meter?: UsageMeter,
 ): Promise<ProcureToPayResult> {
   const ctx: RunContext = { invoice, state: "EXTRACTED", journal: [] };
 
@@ -55,6 +57,7 @@ export async function runProcureToPayAgent(
       tools: P2P_TOOLS,
       messages,
     });
+    meter?.addFromMessage(response);
 
     messages.push({ role: "assistant", content: response.content });
 

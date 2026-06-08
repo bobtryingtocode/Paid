@@ -1,5 +1,6 @@
 import type Anthropic from "@anthropic-ai/sdk";
 import { AGENT_MODEL, createMessage } from "@/agent/anthropic";
+import type { UsageMeter } from "@/billing/usage";
 import {
   CanonicalInvoiceSchema,
   EMIT_INVOICE_INPUT_SCHEMA,
@@ -23,7 +24,10 @@ const EMIT_INVOICE_TOOL: Anthropic.Tool = {
  * Run the extraction model over a document content block and validate the
  * forced tool call against the canonical schema.
  */
-async function extract(documentBlock: Anthropic.ContentBlockParam): Promise<CanonicalInvoice> {
+async function extract(
+  documentBlock: Anthropic.ContentBlockParam,
+  meter?: UsageMeter,
+): Promise<CanonicalInvoice> {
   const message = await createMessage({
     model: AGENT_MODEL,
     max_tokens: 4096,
@@ -41,6 +45,7 @@ async function extract(documentBlock: Anthropic.ContentBlockParam): Promise<Cano
       },
     ],
   });
+  meter?.addFromMessage(message);
 
   const toolUse = message.content.find(
     (b): b is Anthropic.ToolUseBlock => b.type === "tool_use",
@@ -52,17 +57,29 @@ async function extract(documentBlock: Anthropic.ContentBlockParam): Promise<Cano
 }
 
 /** Extract a canonical invoice from a base64-encoded PDF. */
-export function extractInvoiceFromPdf(pdfBase64: string): Promise<CanonicalInvoice> {
-  return extract({
-    type: "document",
-    source: { type: "base64", media_type: "application/pdf", data: pdfBase64 },
-  });
+export function extractInvoiceFromPdf(
+  pdfBase64: string,
+  meter?: UsageMeter,
+): Promise<CanonicalInvoice> {
+  return extract(
+    {
+      type: "document",
+      source: { type: "base64", media_type: "application/pdf", data: pdfBase64 },
+    },
+    meter,
+  );
 }
 
 /** Extract a canonical invoice from plain-text invoice content. */
-export function extractInvoiceFromText(text: string): Promise<CanonicalInvoice> {
-  return extract({
-    type: "document",
-    source: { type: "text", media_type: "text/plain", data: text },
-  });
+export function extractInvoiceFromText(
+  text: string,
+  meter?: UsageMeter,
+): Promise<CanonicalInvoice> {
+  return extract(
+    {
+      type: "document",
+      source: { type: "text", media_type: "text/plain", data: text },
+    },
+    meter,
+  );
 }

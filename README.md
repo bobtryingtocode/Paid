@@ -39,6 +39,7 @@ docs/
   07-roadmap.md            Phased build sequence (Phase 0 → 3) and out-of-scope guardrails
   08-compliance-notes.md   The orchestration-vs-lender line; what keeps us out of regulation
   09-procure-to-pay-agent.md  The in-app invoice agent (PDF → plan → schedule → reconcile)
+  10-metering-and-billing.md  Sell the agent: per-token capacity + Stripe subscriptions
 ```
 
 ## Proposed stack (assumption for these docs)
@@ -119,6 +120,29 @@ recommendation, schedule, and reconciled trial balance. Requires
 `ANTHROPIC_API_KEY` (server-only). Provider scheduling is stubbed (no live
 credentials in this environment); the pure modules (providers, recommender,
 workflow, journal) are unit-tested.
+
+## Selling the agent — metering & subscriptions
+
+The agent is sold on a subscription: **customers don't bring their own API key** —
+the platform holds one server-side `ANTHROPIC_API_KEY` and meters each customer's
+usage in **Claude tokens** against the capacity in their plan. When the period's
+capacity is exhausted, the gateway **hard-blocks** (HTTP 402). Full design:
+[`docs/10-metering-and-billing.md`](docs/10-metering-and-billing.md).
+
+```
+src/billing/plans.ts          Starter / Pro / Scale tiers (token allowance + Stripe price)
+src/billing/capacity.ts       Pure capacity math (hard block)
+src/billing/usage.ts          UsageMeter — sums real Claude token usage across a run
+src/billing/entitlements.ts   checkCapacity / recordUsage / subscription summary
+src/billing/stripe-billing.ts Subscription Checkout + sync from Stripe
+src/app/api/billing/*         checkout, subscription summary
+src/app/api/webhooks/stripe-billing  subscription lifecycle → local Subscription
+```
+
+`POST /api/agent/p2p` is gated: it requires `merchantId`, refuses with 402 when
+over quota, and records the run's real token usage. **Reselling note:** sell the
+agent-with-capacity, not raw Claude token passthrough — see
+[`docs/08`](docs/08-compliance-notes.md) and confirm with Anthropic before launch.
 
 ---
 

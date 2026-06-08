@@ -49,6 +49,22 @@ multi-year regulated-entity slog.
 4. Required merchant and payer disclosures per partner and per state.
 5. Personal-guarantee and UCC-lien documentation for Model C deals.
 
+## Reselling Claude API access (metered agent)
+
+The procure-to-pay agent ([`09`](09-procure-to-pay-agent.md)) is sold on a
+subscription with per-token capacity ([`10`](10-metering-and-billing.md)).
+Customers use the platform's single Anthropic key — they don't bring their own.
+
+- **Value-added product vs. raw resale.** Building a product *on* the Claude API
+  (our agent, metered by our tiers) is ordinary SaaS. Reselling *raw,
+  pass-through* API access ("buy Claude tokens through us") can fall under
+  Anthropic's commercial terms / usage policies and may require their sign-off.
+  Frame and price the offering as the agent-with-included-capacity, not as token
+  resale.
+- **Confirm before launch.** Have Anthropic and a commercial attorney confirm the
+  reselling model — this is the API-terms analogue of the
+  orchestration-vs-lender line above.
+
 ## Standing reminders for the team
 
 - If a feature would require Cadence to **hold, lend, or set terms on** money,
