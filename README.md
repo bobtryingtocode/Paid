@@ -57,6 +57,7 @@ docs/
   16-stripe-webhook-setup.md  Stripe webhook endpoints, events (incl. payout.paid), secrets
   17-testing-strategy.md      Test layers, current coverage, prioritized gaps
   18-production-architecture.md  Running Paid as a real SaaS (hosting, security, ops)
+  19-deploying-to-netlify.md  Deploy the prototype to Netlify (config, env, migrations)
 ```
 
 ## Brand & design system
