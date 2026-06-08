@@ -55,6 +55,7 @@ docs/
   14-bills-pdf-email.md       Generate the bill PDF + email it to the customer
   15-audit-trail-and-automation.md  Audit log, transaction journey, Zapier (non-PII) webhooks
   16-stripe-webhook-setup.md  Stripe webhook endpoints, events (incl. payout.paid), secrets
+  17-testing-strategy.md      Test layers, current coverage, prioritized gaps
 ```
 
 ## Proposed stack (assumption for these docs)
