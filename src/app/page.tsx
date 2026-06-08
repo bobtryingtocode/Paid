@@ -17,6 +17,7 @@ export default function Home() {
         <a href="/login" style={{ color: "#111" }}>Sign in</a>
         <a href="/onboarding" style={{ color: "#111" }}>Get paid (Stripe)</a>
         <a href="/settings/payments" style={{ color: "#111" }}>Payment offerings</a>
+        <a href="/bills" style={{ color: "#111" }}>Bills</a>
         <a href="/agent" style={{ color: "#111" }}>Process an invoice</a>
         <a href="/billing" style={{ color: "#111" }}>Plans &amp; usage</a>
       </p>
