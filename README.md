@@ -38,6 +38,7 @@ docs/
   06-partner-integrations.md  Stripe Connect, Klarna/Affirm, Resolve, embedded-capital APIs
   07-roadmap.md            Phased build sequence (Phase 0 → 3) and out-of-scope guardrails
   08-compliance-notes.md   The orchestration-vs-lender line; what keeps us out of regulation
+  09-procure-to-pay-agent.md  The in-app invoice agent (PDF → plan → schedule → reconcile)
 ```
 
 ## Proposed stack (assumption for these docs)
@@ -95,6 +96,29 @@ CI runs all three on every PR (see `.github/workflows/ci.yml`).
 > explicitly with `TODO(auth)` markers), and Stripe/partner calls require real
 > credentials and a database to exercise end to end. Models B and C are not yet
 > wired (Phases 2–3).
+
+## Procure-to-pay invoice agent
+
+An in-app agent ingests a **PDF invoice of project costs**, recommends a payment
+plan with the supplier's financing provider (Stripe / Klarna / Afterpay),
+schedules the payments, and posts reconciling **double-entry journal entries**.
+It is built on the **Claude Messages API with tool use** (`claude-opus-4-8`,
+adaptive thinking). Full design: [`docs/09-procure-to-pay-agent.md`](docs/09-procure-to-pay-agent.md).
+
+```
+src/agent/invoice/    canonical invoice schema + PDF/text → JSON extraction
+src/agent/p2p/        the tool-use agent loop + tool definitions
+src/domain/p2p/       FinancingProvider (Stripe/Klarna/Afterpay, stubbed), recommender, workflow
+src/domain/accounting/journal.ts   double-entry journal + reconciliation
+src/app/api/agent/p2p/route.ts     AI gateway exposing the agent over HTTP
+```
+
+Exposed at `POST /api/agent/p2p` — accepts a base64 PDF, raw invoice text, or an
+already-normalized invoice; returns the normalized invoice plus the agent's
+recommendation, schedule, and reconciled trial balance. Requires
+`ANTHROPIC_API_KEY` (server-only). Provider scheduling is stubbed (no live
+credentials in this environment); the pure modules (providers, recommender,
+workflow, journal) are unit-tested.
 
 ---
 
