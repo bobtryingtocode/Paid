@@ -1,0 +1,25 @@
+# Netlify deployment config for Paid (Next.js + Prisma).
+# The Next.js runtime plugin handles SSR pages, API route handlers, and assets.
+
+[build]
+  # Generate the Prisma client (with the Lambda engine target) then build Next.
+  command = "npx prisma generate && next build"
+
+[build.environment]
+  NODE_VERSION = "22"
+  # Prisma needs the dev schema engine at build; keep generated client in the bundle.
+  PRISMA_CLIENT_ENGINE_TYPE = "library"
+
+# Netlify auto-installs declared plugins; no need to add it to package.json.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Standalone functions (the agent background runner) live here; the Next.js
+# routes are bundled separately by the plugin above.
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+[functions."agent-run-background"]
+  # Prisma's query engine is loaded at runtime; esbuild can't trace the binary.
+  included_files = ["node_modules/.prisma/client/**"]

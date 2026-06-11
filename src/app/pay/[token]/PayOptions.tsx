@@ -5,14 +5,14 @@ import { formatCents } from "@/lib/money";
 import type { PaymentMethodChoice } from "@/merchant/payment-settings";
 
 const LABELS: Record<PaymentMethodChoice, string> = {
-  pay_over_time: "Pay over time with Klarna",
-  card: "Pay now by card",
-  subscription: "Start subscription",
+  pay_over_time: "Pay over time",
+  card: "Pay in full",
+  subscription: "Subscribe",
 };
 const SUBLABELS: Record<PaymentMethodChoice, string> = {
-  pay_over_time: "Split into installments — no card debt, instant approval at checkout",
-  card: "One-time card or debit payment",
-  subscription: "Recurring billing for ongoing service",
+  pay_over_time: "Klarna · Pay in 4, every 2 weeks · 0% interest",
+  card: "Card or debit, today",
+  subscription: "Ongoing service, billed automatically",
 };
 
 export function PayOptions({
@@ -43,42 +43,46 @@ export function PayOptions({
         body: JSON.stringify({ method }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data?.error?.message ?? "Could not start checkout");
+      if (!res.ok) throw new Error(data?.error?.message ?? "Couldn't start checkout");
       window.location.href = data.redirectUrl;
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not start checkout");
+      setError(err instanceof Error ? err.message : "Couldn't start checkout");
       setBusy(null);
     }
   }
 
   return (
     <div>
-      <p style={{ color: "#666", margin: "0 0 0.25rem" }}>Bill from {merchantName}</p>
-      <div style={{ fontSize: "2rem", fontWeight: 700 }}>{formatCents(amountCents, currency)}</div>
-      {description && <p style={{ color: "#555" }}>{description}</p>}
+      <p className="paid-eyebrow">Bill from {merchantName}</p>
+      <div className="paid-amount" style={{ fontSize: "var(--fs-amount-hero)", marginTop: 8, color: "var(--ink)" }}>
+        {formatCents(amountCents, currency)}
+      </div>
+      {description && <p className="paid-muted" style={{ marginTop: 4 }}>{description}</p>}
 
-      <div style={{ display: "grid", gap: "0.75rem", marginTop: "1.5rem" }}>
+      <div style={{ display: "grid", gap: 12, marginTop: 28 }}>
         {methods.map((m) => (
           <button
             key={m}
             onClick={() => pay(m)}
             disabled={busy !== null}
+            className="paid-card"
             style={{
               textAlign: "left",
-              padding: "0.9rem 1rem",
-              borderRadius: 10,
-              border: "1px solid #ddd",
-              background: m === "pay_over_time" ? "#ffb3c7" : "#fff", // Klarna pink for the hero option
+              padding: "16px 18px",
               cursor: "pointer",
+              borderColor: m === "pay_over_time" ? "var(--paid)" : "var(--border)",
             }}
           >
-            <div style={{ fontWeight: 600 }}>{busy === m ? "…" : LABELS[m]}</div>
-            <div style={{ fontSize: "0.85rem", color: "#666" }}>{SUBLABELS[m]}</div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span style={{ fontWeight: 700 }}>{busy === m ? "…" : LABELS[m]}</span>
+              <span aria-hidden style={{ color: "var(--paid)" }}>›</span>
+            </div>
+            <div className="paid-muted" style={{ fontSize: "var(--fs-small)", marginTop: 4 }}>{SUBLABELS[m]}</div>
           </button>
         ))}
       </div>
 
-      {error && <p style={{ color: "#b00020" }}>{error}</p>}
+      {error && <p style={{ color: "var(--alert)", marginTop: 12 }}>{error}</p>}
     </div>
   );
 }

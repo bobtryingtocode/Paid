@@ -55,7 +55,20 @@ docs/
   14-bills-pdf-email.md       Generate the bill PDF + email it to the customer
   15-audit-trail-and-automation.md  Audit log, transaction journey, Zapier (non-PII) webhooks
   16-stripe-webhook-setup.md  Stripe webhook endpoints, events (incl. payout.paid), secrets
+  17-testing-strategy.md      Test layers, current coverage, prioritized gaps
+  18-production-architecture.md  Running Paid as a real SaaS (hosting, security, ops)
+  19-deploying-to-netlify.md  Deploy the prototype to Netlify (config, env, migrations)
 ```
+
+## Brand & design system
+
+The UI follows the **Paid** design system (from the Claude Design handoff bundle):
+bone-paper background with a faint dot-grid, warm ink text, **one** Paid-green
+accent, **Hanken Grotesk** for copy and **JetBrains Mono** for money. Tokens +
+brand component classes live in [`src/app/paid.css`](src/app/paid.css) (imported
+once in the root layout); self-hosted fonts in [`public/fonts/`](public/fonts).
+The buyer checkout (`/pay/[token]`) is the showcase screen — a single calm column,
+the amount in mono, "you're paid in full today" voice.
 
 ## Proposed stack (assumption for these docs)
 

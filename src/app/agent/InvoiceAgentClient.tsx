@@ -45,6 +45,22 @@ export function InvoiceAgentClient() {
   const [quota, setQuota] = useState(false);
   const [result, setResult] = useState<AgentResponse | null>(null);
 
+  /** Poll an async job until it settles (≤10 min, every 3s). */
+  async function pollJob(jobId: string): Promise<AgentResponse> {
+    for (let i = 0; i < 200; i++) {
+      await new Promise((r) => setTimeout(r, 3000));
+      const res = await fetch(`/api/agent/p2p/jobs/${jobId}`);
+      if (!res.ok) throw new Error("Lost track of the agent run — try again");
+      const job = await res.json();
+      if (job.status === "done") return job.result as AgentResponse;
+      if (job.status === "error") {
+        if (job.error?.code === "quota_exceeded") setQuota(true);
+        throw new Error(job.error?.message ?? "Agent run failed");
+      }
+    }
+    throw new Error("Agent run timed out");
+  }
+
   async function run(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
@@ -56,11 +72,17 @@ export function InvoiceAgentClient() {
         mode === "pdf"
           ? { pdfBase64: file ? await fileToBase64(file) : "" }
           : { text };
-      const res = await fetch("/api/agent/p2p", {
+      const payload = {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(body),
-      });
+      } as const;
+
+      // Prefer the async path (long-running, survives serverless sync caps);
+      // 501 means we're not on Netlify — fall back to the sync route.
+      let res = await fetch("/api/agent/p2p/async", payload);
+      if (res.status === 501) res = await fetch("/api/agent/p2p", payload);
+
       if (res.status === 401) {
         window.location.href = "/login";
         return;
@@ -71,7 +93,8 @@ export function InvoiceAgentClient() {
         throw new Error(data?.error?.message ?? "Quota exhausted");
       }
       if (!res.ok) throw new Error(data?.error?.message ?? "Agent run failed");
-      setResult(data as AgentResponse);
+
+      setResult(res.status === 202 ? await pollJob(data.jobId) : (data as AgentResponse));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Agent run failed");
     } finally {
