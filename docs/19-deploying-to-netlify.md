@@ -76,12 +76,27 @@ DATABASE_URL=... DIRECT_URL=... npx prisma migrate deploy
 3. Sign up, complete Stripe Connect onboarding, set payment offerings, send a
    test bill, and open the `/pay/<token>` page.
 
-## Known limitation — the agent endpoint
+## The agent endpoint — async on Netlify
 
-`/api/agent/p2p` runs a multi-turn Claude loop and sets `maxDuration = 300`.
-Netlify **synchronous** Functions cap well below that (≈10–26s). For a prototype,
-short invoices may finish in time, but a heavy run can hit the function timeout.
-If you see timeouts, move that route to a **Netlify Background Function** (up to
-15 min) or host the agent on a platform without the sync cap. Everything else
-(auth, bills, buyer checkout, billing, webhooks, transactions) fits comfortably
-within the function limits.
+`/api/agent/p2p` runs a multi-turn Claude loop, which exceeds Netlify's
+**synchronous** function cap (≈10–26s). On Netlify the agent therefore runs as a
+**Background Function** (up to 15 min):
+
+```
+client → POST /api/agent/p2p/async        auth + capacity pre-check (fast 402)
+            └─▶ invokes /.netlify/functions/agent-run-background
+                (internal AUTH_SECRET bearer; platform acks 202 and keeps running)
+                  └─▶ executeAgentRun(...) → result written to Netlify Blobs
+client → GET /api/agent/p2p/jobs/:id      polls until done / error (ownership-checked)
+```
+
+The `/agent` page tries the async path first and **falls back to the sync route**
+when it gets 501 (i.e. running locally or on a non-Netlify host). Job records
+live in Netlify Blobs (store `agent-jobs`); the background function is bundled
+from `netlify/functions/agent-run-background.mts` with the Prisma engine via
+`included_files` in `netlify.toml`. A direct unauthorized POST to the background
+function still gets the platform's 202 ack — that's how background functions
+respond — but the body verifies the internal bearer and does nothing without it.
+
+Everything else (auth, bills, buyer checkout, billing, webhooks, transactions)
+fits comfortably within the normal function limits.

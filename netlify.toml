@@ -13,3 +13,13 @@
 # Netlify auto-installs declared plugins; no need to add it to package.json.
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+# Standalone functions (the agent background runner) live here; the Next.js
+# routes are bundled separately by the plugin above.
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+[functions."agent-run-background"]
+  # Prisma's query engine is loaded at runtime; esbuild can't trace the binary.
+  included_files = ["node_modules/.prisma/client/**"]
