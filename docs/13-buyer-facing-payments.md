@@ -3,7 +3,7 @@
 For small landscaping / contracting / service companies: after a job, the seller
 sends the customer a bill with a payment link; the customer lands on a hosted
 page that offers **only the payment methods the seller enabled** and routes to
-Stripe. The seller is paid into their connected account; Cadence never holds
+Stripe. The seller is paid into their connected account; Noctua Pay never holds
 funds and never stores bank numbers.
 
 This document covers the spine that's built: **seller payment offerings** + the
@@ -43,7 +43,7 @@ API: `GET` / `PUT /api/merchants/me/payment-settings` (auth-gated).
    - `card` → card only, pay now
    - `pay_over_time` → Klarna/Affirm via Stripe; seller paid in full
    - `subscription` → subscription mode on the seller's Stripe Price
-   Each is a direct charge on the connected account with a Cadence application
+   Each is a direct charge on the connected account with a Noctua Pay application
    fee; funds settle to the seller's bank (held by Stripe). Funding is confirmed
    by webhook, not the client.
 4. `/pay/[token]/success` after redirect back from Stripe.
@@ -53,7 +53,7 @@ API: `GET` / `PUT /api/merchants/me/payment-settings` (auth-gated).
 The seller's ACH account + routing are collected and **held by Stripe** during
 Connect onboarding ([`/onboarding`](11-auth-and-billing-ui.md) → Connect). They
 are the connected account's payout destination, so charges settle there
-automatically. Cadence stores **no** raw bank numbers — avoiding the PCI/PII and
+automatically. Noctua Pay stores **no** raw bank numbers — avoiding the PCI/PII and
 encryption burden that storing routing/account numbers would create.
 
 ## Status & guardrails

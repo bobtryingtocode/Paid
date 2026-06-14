@@ -1,11 +1,11 @@
+import { Wordmark } from "./Wordmark";
+
 export default function Home() {
   return (
     <main style={{ maxWidth: 1040, margin: "0 auto", padding: "80px 24px" }}>
-      <div className="paid-wordmark" style={{ fontSize: 22 }}>
-        Paid<span className="dot">.</span>
-      </div>
+      <Wordmark size={24} />
 
-      <p className="paid-eyebrow" style={{ marginTop: 48 }}>For small shops &amp; service businesses</p>
+      <p className="paid-eyebrow" style={{ marginTop: 48 }}>A Noctua service · for your SMB customers</p>
       <h1 className="paid-display" style={{ maxWidth: 760, marginTop: 12 }}>
         Get paid in full today<span style={{ color: "var(--paid)" }}>.</span> Let them pay over time<span style={{ color: "var(--paid)" }}>.</span>
       </h1>

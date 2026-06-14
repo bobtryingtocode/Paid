@@ -2,7 +2,7 @@ import type Stripe from "stripe";
 import { getStripe } from "@/lib/stripe";
 import type { PaymentMethodChoice, PaymentOfferings } from "@/merchant/payment-settings";
 
-/** Cadence's share of the transaction, as an application fee (basis points). */
+/** Noctua Pay's share of the transaction, as an application fee (basis points). */
 export const CADENCE_FEE_BPS = 100; // 1.00%
 
 export interface BuildCheckoutInput {
@@ -21,7 +21,7 @@ export interface BuildCheckoutInput {
 /**
  * Build the right Stripe Checkout Session for the buyer's chosen method, as a
  * direct charge on the seller's connected account (so payouts go to the seller;
- * Cadence takes an application fee). Returns the redirect URL.
+ * Noctua Pay takes an application fee). Returns the redirect URL.
  *
  * - card          → pay now, card/debit only
  * - pay_over_time → Klarna/Affirm via Stripe; seller is paid in full now

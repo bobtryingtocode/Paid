@@ -59,7 +59,7 @@ Maps to: [`03-ledger-and-sweep.md`](03-ledger-and-sweep.md) in full; `Deal`,
 - **Supporting every model and every niche at once** — one model, one niche,
   then expand.
 
-These are not "later features"; they are the guardrails that keep Cadence an
+These are not "later features"; they are the guardrails that keep Noctua Pay an
 orchestration layer and out of regulated-lender territory. See
 [`08-compliance-notes.md`](08-compliance-notes.md).
 

@@ -30,7 +30,7 @@ export default async function OnboardingPage() {
       <h1 style={{ fontSize: "1.8rem" }}>Get paid — Stripe onboarding</h1>
       <p style={{ color: "#666" }}>
         Connect a Stripe account so funds can route <code>partner → Stripe → you</code>.
-        Cadence never holds your money.
+        Noctua Pay never holds your money.
       </p>
 
       <ul style={{ lineHeight: 1.9, listStyle: "none", padding: 0, margin: "1.5rem 0" }}>

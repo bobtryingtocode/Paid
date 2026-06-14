@@ -1,6 +1,6 @@
 # 17 · Testing strategy
 
-How Cadence is tested, what's covered today, and the prioritized plan to close
+How Noctua Pay is tested, what's covered today, and the prioritized plan to close
 the gaps. Guiding principle: **guard the properties that cost money or break
 compliance** — money math, idempotency, capacity hard-block, auth/ownership, and
 the no-PII-in-outbound-events invariant — before chasing coverage percentages.

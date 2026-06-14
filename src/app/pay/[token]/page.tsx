@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { enabledMethods, getPaymentOfferings } from "@/merchant/payment-settings";
+import { Wordmark } from "@/app/Wordmark";
 import { PayOptions } from "./PayOptions";
 
 export const runtime = "nodejs";
@@ -9,8 +10,8 @@ function Shell({ children }: { children: React.ReactNode }) {
   // The buyer checkout is a single calm column (~440px).
   return (
     <main style={{ maxWidth: 440, margin: "0 auto", padding: "56px 24px" }}>
-      <div className="paid-wordmark" style={{ fontSize: 18, marginBottom: 32 }}>
-        Paid<span className="dot">.</span>
+      <div style={{ marginBottom: 32 }}>
+        <Wordmark size={18} />
       </div>
       {children}
     </main>

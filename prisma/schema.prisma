@@ -1,10 +1,11 @@
-// Cadence — Phase 1 (Model A) Prisma schema.
+// Noctua Pay — Phase 1 (Model A) Prisma schema.
 // Focused on the consumer-BNPL-via-Stripe flow plus the append-only ledger.
 // Models B and C entities (see docs/04-data-model.md) are added in later phases.
 
 generator client {
   provider = "prisma-client-js"
-  // "native" for local/CI; "rhel-openssl-3.0.x" for Netlify Functions (AWS Lambda).
+  // "native" for local/CI; "rhel-openssl-3.0.x" for the serverless runtime
+  // (Vercel / AWS Lambda, Amazon Linux with OpenSSL 3).
   binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
@@ -38,7 +39,7 @@ enum LinkStatus {
 
 enum LedgerKind {
   FUNDING // partner funds the merchant in full (Model A)
-  FEE // Cadence's share of the partner fee
+  FEE // Noctua Pay's share of the partner fee
   ADJUSTMENT // corrections (append-only; never edit prior rows)
 }
 
@@ -138,7 +139,7 @@ model Transaction {
   partnerId     String
   partner       Partner       @relation(fields: [partnerId], references: [id])
   amountCents   BigInt // funded to merchant in full
-  feeCents      BigInt        @default(0) // Cadence's share of partner fee
+  feeCents      BigInt        @default(0) // Noctua Pay's share of partner fee
   fundedAt      DateTime?
   ledgerEvents  LedgerEvent[]
 }
@@ -175,6 +176,29 @@ model AuditEvent {
 
   @@index([merchantId, createdAt])
   @@index([paymentLinkId, createdAt])
+}
+
+enum AgentJobStatus {
+  RUNNING
+  DONE
+  ERROR
+}
+
+// Async procure-to-pay agent runs. The enqueue route inserts a RUNNING row, does
+// the (long) work after responding (Next.js `after`, Node runtime), then writes
+// the result/error back; the poll route reads it (ownership-checked). DB-backed
+// so async runs work on any host (replaces the Netlify Blobs job store).
+model AgentJob {
+  id           String         @id @default(cuid())
+  merchantId   String
+  status       AgentJobStatus @default(RUNNING)
+  result       Json?
+  errorCode    String?
+  errorMessage String?
+  createdAt    DateTime       @default(now())
+  finishedAt   DateTime?
+
+  @@index([merchantId, createdAt])
 }
 
 // Raw, verified inbound webhooks. Unique on (source, externalId) → idempotent intake.

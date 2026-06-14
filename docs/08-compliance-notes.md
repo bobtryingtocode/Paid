@@ -9,7 +9,7 @@
 
 ## The line that must not be crossed
 
-| Cadence DOES (orchestration) | Cadence must NOT (regulated activity) |
+| Noctua Pay DOES (orchestration) | Noctua Pay must NOT (regulated activity) |
 |------------------------------|----------------------------------------|
 | Build the experience and the UX | Hold customer or merchant funds in its own account |
 | Coordinate partners and present the right checkout | Lend its own money / advance its own capital |
@@ -17,23 +17,23 @@
 | Route money via Stripe Connect (`partner → Stripe → merchant`) | Become the money-transmitter / custodian |
 | Earn a **share of the partner's fee** | Earn interest as a lender |
 
-Cross any item in the right column and Cadence becomes a regulated bank /
+Cross any item in the right column and Noctua Pay becomes a regulated bank /
 money-transmitter — licensing in all 50 states, large capital requirements, and
 a heavy compliance burden. That is the difference between a ~6-month build and a
 multi-year regulated-entity slog.
 
 ## How the architecture enforces the line
 
-- **No custody.** Funds move `partner → Stripe → merchant`. Cadence never has a
+- **No custody.** Funds move `partner → Stripe → merchant`. Noctua Pay never has a
   pooled account holding others' money. (See
   [`01-architecture.md`](01-architecture.md).)
 - **Partners own underwriting.** Approval/credit decisions happen in the
-  partner's API. Cadence has **no credit model** — explicitly out of scope (see
+  partner's API. Noctua Pay has **no credit model** — explicitly out of scope (see
   [`07-roadmap.md`](07-roadmap.md)).
 - **Non-recourse risk sits with the partner** (Models A/B): if the payer never
   pays, that's the partner's loss.
-- **Model C collateral, not Cadence capital.** The advance is the financer's;
-  the inventory (UCC lien) and often a personal guarantee back it. Cadence
+- **Model C collateral, not Noctua Pay capital.** The advance is the financer's;
+  the inventory (UCC lien) and often a personal guarantee back it. Noctua Pay
   provides the sweep mechanism and the system of record, not the money.
 
 ## Things to get an attorney to confirm before launch
@@ -44,7 +44,7 @@ multi-year regulated-entity slog.
    characterized as a sale of future receivables vs. a loan, and the
    implications.
 3. Money-transmission exposure given that sweeps flow through Stripe Connect
-   (relying on Stripe's licensing) — confirm Cadence's role stays
+   (relying on Stripe's licensing) — confirm Noctua Pay's role stays
    facilitator-only.
 4. Required merchant and payer disclosures per partner and per state.
 5. Personal-guarantee and UCC-lien documentation for Model C deals.
@@ -67,7 +67,7 @@ Customers use the platform's single Anthropic key — they don't bring their own
 
 ## Standing reminders for the team
 
-- If a feature would require Cadence to **hold, lend, or set terms on** money,
+- If a feature would require Noctua Pay to **hold, lend, or set terms on** money,
   stop and re-read this page.
 - Keep partner relationships such that **license, capital, underwriting, and
   risk** always sit with the partner.

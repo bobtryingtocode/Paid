@@ -36,7 +36,7 @@ the outbound webhook (best-effort).
 
 `emitEvent()` (`src/audit/webhook.ts`) POSTs the non-PII payload to
 `ZAPIER_WEBHOOK_URL` (a Zapier "Catch Hook" trigger), HMAC-signed with
-`WEBHOOK_SIGNING_SECRET` in the `x-cadence-signature` header so the consumer can
+`WEBHOOK_SIGNING_SECRET` in the `x-noctua-signature` header so the consumer can
 verify it. Unset URL → stub (logs); failures are caught and never break the
 payment flow. Payload shape (`buildEventPayload`):
 
@@ -47,7 +47,7 @@ payment flow. Payload shape (`buildEventPayload`):
 ```
 
 In Zapier: **Catch Hook** trigger → your actions (notify the merchant, append to a
-Sheet, post to Slack, etc.). No PII leaves Cadence.
+Sheet, post to Slack, etc.). No PII leaves Noctua Pay.
 
 ## Transaction journey (merchant portal)
 
@@ -62,7 +62,7 @@ Sheet, post to Slack, etc.). No PII leaves Cadence.
 | Env | Purpose |
 |-----|---------|
 | `ZAPIER_WEBHOOK_URL` | Zapier Catch Hook URL; unset → stub mode |
-| `WEBHOOK_SIGNING_SECRET` | HMAC secret for `x-cadence-signature` |
+| `WEBHOOK_SIGNING_SECRET` | HMAC secret for `x-noctua-signature` |
 
 ## Status & guardrails
 

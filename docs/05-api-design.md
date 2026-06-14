@@ -39,7 +39,7 @@ errors as `{ "error": { "code", "message" } }`.
 | Method | Path | Purpose |
 |--------|------|---------|
 | `GET`  | `/api/pay/:token` | Public link details for the hosted payer page (amount, merchant display, available pay-over-time options). No secrets. |
-| `POST` | `/api/pay/:token/checkout` | Begin checkout: Cadence creates the Stripe Checkout Session (presenting Klarna/Affirm for A) or the Resolve approval flow (B). Returns a redirect URL. |
+| `POST` | `/api/pay/:token/checkout` | Begin checkout: Noctua Pay creates the Stripe Checkout Session (presenting Klarna/Affirm for A) or the Resolve approval flow (B). Returns a redirect URL. |
 
 Funding is confirmed **via webhook**, not via the client — the client redirect
 only starts the flow.
@@ -53,7 +53,7 @@ only starts the flow.
 | `POST` | `/api/deals` | Create a Model C deal. Body: `{ partnerId, advanceCents, factor, sweepRateBps, maturityDate, earlyPayoffRebateBps? }`. Returns deal with computed `capCents`. |
 | `GET`  | `/api/deals` | List the merchant's deals. |
 | `GET`  | `/api/deals/:id` | Deal detail: terms, `capCents`, `sweptToDateCents`, `balanceLeftCents`, status, projected balloon. |
-| `POST` | `/api/deals/:id/fund` | Trigger/confirm the partner advance to the maker/3PL (records `ADVANCE` ledger event; Cadence does not move this money itself). |
+| `POST` | `/api/deals/:id/fund` | Trigger/confirm the partner advance to the maker/3PL (records `ADVANCE` ledger event; Noctua Pay does not move this money itself). |
 | `GET`  | `/api/deals/:id/ledger` | The deal's ledger events (advance, sweeps, balloon, rebate). |
 | `GET`  | `/api/deals/:id/sales` | Sales recorded for the deal (paginated). |
 | `POST` | `/api/deals/:id/balloon` | Compute & initiate the maturity true-up (usually called by the scheduled maturity job, exposed for ops). |

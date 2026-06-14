@@ -17,7 +17,7 @@ export async function emitEvent(event: AuditEventRecord): Promise<void> {
   const body = JSON.stringify(payload);
   const headers: Record<string, string> = { "content-type": "application/json" };
   const secret = process.env.WEBHOOK_SIGNING_SECRET;
-  if (secret) headers["x-cadence-signature"] = signPayload(body, secret);
+  if (secret) headers["x-noctua-signature"] = signPayload(body, secret);
 
   try {
     const res = await fetch(url, { method: "POST", headers, body });

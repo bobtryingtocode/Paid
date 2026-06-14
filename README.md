@@ -1,8 +1,8 @@
-# Cadence
+# Noctua Pay
 
 > Get the maker paid now. Let the business repay as it sells.
 
-Cadence is a payment-link app (iOS + web) that lets small businesses get paid
+Noctua Pay is a payment-link app (iOS + web) that lets small businesses get paid
 **in full today** while their customer — or their own buyer, or their inventory
 itself — pays over time, with a **financing partner carrying the risk**.
 
@@ -15,7 +15,7 @@ heavier **bank/lender-style** path (net terms / inventory financing) for buyers
 whose internal processes require it (Models B & C). See
 [`docs/00-product-overview.md`](docs/00-product-overview.md).
 
-Cadence is an **orchestration layer**, not a lender. It never holds, lends, or
+Noctua Pay is an **orchestration layer**, not a lender. It never holds, lends, or
 moves customer money on its own balance sheet. It plugs into embedded-capital
 and BNPL partners who hold the license, the capital, the underwriting, and the
 risk, and earns a share of their fee. See
@@ -56,19 +56,20 @@ docs/
   15-audit-trail-and-automation.md  Audit log, transaction journey, Zapier (non-PII) webhooks
   16-stripe-webhook-setup.md  Stripe webhook endpoints, events (incl. payout.paid), secrets
   17-testing-strategy.md      Test layers, current coverage, prioritized gaps
-  18-production-architecture.md  Running Paid as a real SaaS (hosting, security, ops)
-  19-deploying-to-netlify.md  Deploy the prototype to Netlify (config, env, migrations)
+  18-production-architecture.md  Running Noctua Pay as a real SaaS (hosting, security, ops)
+  19-deploying-to-vercel.md   Deploy the app to Vercel (config, env, migrations)
 ```
 
 ## Brand & design system
 
-The UI follows the **Paid** design system (from the Claude Design handoff bundle):
-bone-paper background with a faint dot-grid, warm ink text, **one** Paid-green
-accent, **Hanken Grotesk** for copy and **JetBrains Mono** for money. Tokens +
-brand component classes live in [`src/app/paid.css`](src/app/paid.css) (imported
-once in the root layout); self-hosted fonts in [`public/fonts/`](public/fonts).
-The buyer checkout (`/pay/[token]`) is the showcase screen — a single calm column,
-the amount in mono, "you're paid in full today" voice.
+The UI follows the **Noctua Pay** friendly owl theme: warm paper background with a
+faint dot-grid, warm ink text, the Noctua **Pipeline Green** (`#1A6B4D`) accent,
+**Poppins** for copy and **IBM Plex Mono** for money, with the owl mark in the
+wordmark ([`src/app/Wordmark.tsx`](src/app/Wordmark.tsx)). Tokens + brand
+component classes live in [`src/app/paid.css`](src/app/paid.css) (imported once in
+the root layout); fonts load via Google Fonts `@import`. The buyer checkout
+(`/pay/[token]`) is the showcase screen — a single calm column, the amount in
+mono, "you're paid in full today" voice.
 
 ## Proposed stack (assumption for these docs)
 
@@ -125,7 +126,7 @@ CI runs all of these on every PR (see `.github/workflows/ci.yml`).
 ### Demo data
 
 `npm run db:seed` (after `npx prisma migrate dev`) loads a demo merchant
-(`demo@cadence.test` / `password123`) with an active Pro plan and sample data so
+(`demo@noctua.test` / `password123`) with an active Pro plan and sample data so
 you can click through `/login → /onboarding → /agent → /billing`. Full guide:
 [`docs/12-local-dev-and-demo.md`](docs/12-local-dev-and-demo.md).
 
@@ -193,7 +194,7 @@ return 401 when signed out (the `TODO(auth)` stubs are gone). Full design:
 - **`/onboarding`** — Stripe **Connect** onboarding: create the connected account,
   hosted onboarding link, and live status (charges/payouts enabled). Routes:
   `POST /api/merchants/me/stripe/onboard`, `GET /api/merchants/me`. Funds route
-  `partner → Stripe → merchant`; Cadence never holds funds.
+  `partner → Stripe → merchant`; Noctua Pay never holds funds.
 - **`/bills`** — create a bill for a completed service, generate a **PDF**, and
   **email it** to the customer with the pay link (`POST /api/links/:id/send`,
   `GET /api/links/:id/bill`). Email via Resend, or stub mode without a key. See
@@ -206,7 +207,7 @@ return 401 when signed out (the `TODO(auth)` stubs are gone). Full design:
 - **`/transactions`** — PII-/audit-compliant transaction journey: per-transaction
   event timeline + deposit bank (name + last4 from Stripe). Backed by an
   append-only `AuditEvent` log that also emits **non-PII** events to a Zapier
-  webhook (HMAC-signed) for automation — PII never leaves Cadence. See
+  webhook (HMAC-signed) for automation — PII never leaves Noctua Pay. See
   [`docs/15-audit-trail-and-automation.md`](docs/15-audit-trail-and-automation.md).
 - **`/agent`** — upload a PDF invoice (or paste text) and run the procure-to-pay
   agent; shows the recommended plan, schedule, reconciliation, and token usage.

@@ -1,6 +1,6 @@
 # 16 · Stripe webhook setup
 
-Cadence has **two** Stripe webhook endpoints with **separate signing secrets**.
+Noctua Pay has **two** Stripe webhook endpoints with **separate signing secrets**.
 Configure both in the Stripe Dashboard (or forward them locally with the Stripe
 CLI). Each endpoint verifies its signature and ingests events idempotently.
 
@@ -32,7 +32,7 @@ into `STRIPE_WEBHOOK_SECRET`.
 
 ## 2. Subscriptions — platform endpoint
 
-Merchant subscriptions to **Cadence's own plans** ([`10`](10-metering-and-billing.md))
+Merchant subscriptions to **Noctua Pay's own plans** ([`10`](10-metering-and-billing.md))
 are on your platform account (not connected). Add a separate endpoint
 `https://<your-domain>/api/webhooks/stripe-billing` (default "Events on your
 account"), select the `checkout.session.completed` and `customer.subscription.*`

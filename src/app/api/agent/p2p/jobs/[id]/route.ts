@@ -1,6 +1,6 @@
 import { ok, error } from "@/lib/http";
 import { currentMerchantId } from "@/auth";
-import { getJob, jobsAvailable } from "@/agent/p2p/jobs";
+import { getJob } from "@/agent/p2p/jobs";
 
 export const runtime = "nodejs";
 
@@ -9,10 +9,6 @@ export async function GET(
   _req: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  if (!jobsAvailable()) {
-    return error("async_unavailable", "Async agent runs require the Netlify runtime", 501);
-  }
-
   const merchantId = await currentMerchantId();
   if (!merchantId) return error("unauthorized", "Sign in required", 401);
 

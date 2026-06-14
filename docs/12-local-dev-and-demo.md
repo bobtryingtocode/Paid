@@ -1,6 +1,6 @@
 # 12 · Local dev, demo data & smoke test
 
-How to run Cadence locally and click through the whole flow.
+How to run Noctua Pay locally and click through the whole flow.
 
 ## Smoke test (no setup required)
 
@@ -54,7 +54,7 @@ npm run dev                       # http://localhost:3000
 
 | | |
 |---|---|
-| Email | `demo@cadence.test` |
+| Email | `demo@noctua.test` |
 | Password | `password123` |
 
 The seed (`prisma/seed.ts`) creates: the demo merchant, an **ACTIVE Pro

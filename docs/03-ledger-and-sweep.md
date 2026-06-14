@@ -26,7 +26,7 @@ Derived quantities:
 
 ## Sweep mechanics (per sale)
 
-On each sale that runs through the Cadence-connected Stripe account:
+On each sale that runs through the Noctua Pay-connected Stripe account:
 
 1. Compute `sweep = round(gross_sale × sweep_rate)`.
 2. If `swept_to_date + sweep > cap`, clamp so the final sweep exactly clears the

@@ -2,11 +2,11 @@
 
 ## Guiding principle
 
-Cadence is an **orchestration layer**. Money flows
-`partner → Stripe → merchant`; it never rests in a Cadence-controlled account.
+Noctua Pay is an **orchestration layer**. Money flows
+`partner → Stripe → merchant`; it never rests in a Noctua Pay-controlled account.
 The backend's job is to coordinate partners, present the right checkout, and
 keep an authoritative ledger — not to hold, lend, or move funds on its own
-account. Keep this in mind whenever a design choice would put Cadence in the
+account. Keep this in mind whenever a design choice would put Noctua Pay in the
 custody or credit path.
 
 ## High-level component map
@@ -59,7 +59,7 @@ custody or credit path.
 
 1. **Client ↔ Backend.** The client never holds partner secret keys, never
    talks to a partner directly, and never computes authoritative balances.
-   Clients call the Cadence backend; the backend calls partners. The ledger is
+   Clients call the Noctua Pay backend; the backend calls partners. The ledger is
    read by clients, written only by the backend.
 2. **Backend ↔ Partners.** All secret keys (Stripe secret key, partner API
    keys, webhook signing secrets) live in server-side environment/secret
