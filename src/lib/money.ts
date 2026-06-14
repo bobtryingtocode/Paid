@@ -1,5 +1,5 @@
 /**
- * Money helpers. Cadence stores all money as integer minor units (cents) and
+ * Money helpers. Noctua Pay stores all money as integer minor units (cents) and
  * never uses floating point for amounts. Rates are expressed in basis points
  * (1 bp = 0.01%). See docs/01-architecture.md ("Money & precision conventions").
  */

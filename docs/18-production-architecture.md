@@ -62,7 +62,7 @@ is set per-environment in the host's secret store — nothing in the repo.
 ## Payments in production
 
 - **Stripe Connect (Express)** for sellers — Stripe holds KYC + the payout bank;
-  funds settle seller-direct as direct charges with a Cadence application fee.
+  funds settle seller-direct as direct charges with a Noctua Pay application fee.
   We never touch the money or store bank numbers.
 - **Stripe Billing** for the seller's own subscription to Paid ([`10`](10-metering-and-billing.md)).
 - **Webhooks** are the source of truth for money movement: signature-verified,

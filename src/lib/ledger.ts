@@ -20,7 +20,7 @@ export interface LedgerEventInput {
 
 /**
  * Net amount funded to the merchant, derived from the event log.
- * FUNDING credits the merchant; FEE debits Cadence's share; ADJUSTMENT corrects.
+ * FUNDING credits the merchant; FEE debits Noctua Pay's share; ADJUSTMENT corrects.
  */
 export function deriveMerchantNetCents(events: LedgerEventInput[]): Cents {
   return events.reduce((sum, e) => {

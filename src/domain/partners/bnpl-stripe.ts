@@ -3,7 +3,7 @@
  *
  * Klarna/Affirm are not integrated directly; they are surfaced as Stripe
  * payment methods on a Checkout Session. The partner funds the merchant in full
- * and carries the repayment risk (non-recourse). Cadence records the funding as
+ * and carries the repayment risk (non-recourse). Noctua Pay records the funding as
  * a ledger event and stays out of the collection path.
  *
  * See docs/02-money-models.md (Model A) and docs/06-partner-integrations.md.
@@ -17,15 +17,15 @@ import type {
   VerifiedWebhook,
 } from "./types";
 
-/** Cadence's share of the partner fee, in basis points (illustrative). */
+/** Noctua Pay's share of the partner fee, in basis points (illustrative). */
 const CADENCE_FEE_BPS = 100; // 1.00%
 
 export const bnplStripeAdapter: PartnerAdapter = {
   kind: "BNPL_STRIPE",
 
   async beginCheckout(input: CheckoutInput): Promise<CheckoutResult> {
-    // Funds route partner → Stripe → merchant via the connected account; Cadence
-    // never takes custody. The application fee is Cadence's share of the fee.
+    // Funds route partner → Stripe → merchant via the connected account; Noctua Pay
+    // never takes custody. The application fee is Noctua Pay's share of the fee.
     const session = await getStripe().checkout.sessions.create(
       {
         mode: "payment",

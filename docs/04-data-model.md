@@ -9,7 +9,7 @@ event log). All money is stored in **integer minor units (cents)**.
 
 | Entity | Purpose |
 |--------|---------|
-| `Merchant` | The shop / supplier / brand using Cadence. Owns a Stripe Connect account. |
+| `Merchant` | The shop / supplier / brand using Noctua Pay. Owns a Stripe Connect account. |
 | `Payer` | A consumer or business buyer (Models A/B). May be lightweight. |
 | `Partner` | A financing partner (BNPL via Stripe, Resolve, embedded-capital). |
 | `PaymentLink` | A request/invoice a payer opens (Models A/B). |
@@ -108,7 +108,7 @@ model Transaction {
   payerId         String?
   payer           Payer?       @relation(fields: [payerId], references: [id])
   amountCents     BigInt       // funded to merchant in full
-  feeCents        BigInt       @default(0) // Cadence's share of partner fee
+  feeCents        BigInt       @default(0) // Noctua Pay's share of partner fee
   fundedAt        DateTime?
   ledgerEvents    LedgerEvent[]
 }

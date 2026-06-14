@@ -9,8 +9,8 @@ export const maxDuration = 300;
 /**
  * POST /api/agent/p2p — the synchronous AI gateway for the procure-to-pay
  * invoice agent. Metered + gated by the merchant's subscription (402 when the
- * plan's token capacity is exhausted). On hosts with short function timeouts
- * (Netlify sync functions), prefer the async path: POST /api/agent/p2p/async.
+ * plan's token capacity is exhausted). On hosts with short function timeouts,
+ * prefer the async path: POST /api/agent/p2p/async.
  */
 export async function POST(req: Request) {
   const merchantId = await currentMerchantId();

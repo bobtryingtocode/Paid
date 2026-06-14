@@ -5,7 +5,7 @@
  *   npx prisma migrate dev      # create the schema
  *   npm run db:seed             # load this demo data
  *
- * Demo login:  demo@cadence.test  /  password123
+ * Demo login:  demo@noctua.test  /  password123
  */
 import { PrismaClient } from "@prisma/client";
 import { hashPassword } from "../src/auth/password";
@@ -16,11 +16,11 @@ const prisma = new PrismaClient();
 async function main() {
   // Demo merchant
   const merchant = await prisma.merchant.upsert({
-    where: { email: "demo@cadence.test" },
+    where: { email: "demo@noctua.test" },
     update: {},
     create: {
       name: "Demo Co",
-      email: "demo@cadence.test",
+      email: "demo@noctua.test",
       passwordHash: hashPassword("password123"),
     },
   });

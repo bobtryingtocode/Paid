@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48" role="img" aria-label="Noctua">
+  <g fill="none" stroke="#1A6B4D" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+    
+    <path d="M9 13 L24 21 L39 13"></path>
+    
+    <circle cx="16" cy="28" r="6.4"></circle>
+    <circle cx="32" cy="28" r="6.4"></circle>
+  </g>
+  
+  <circle cx="16" cy="28" r="2.3" fill="#1A6B4D"></circle>
+  <circle cx="32" cy="28" r="2.3" fill="#1A6B4D"></circle>
+  
+  <path d="M24 22 L20.5 26 L24 29 L27.5 26 Z" fill="#1A6B4D"></path>
+</svg>

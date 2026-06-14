@@ -1,6 +1,6 @@
 # 06 · Partner integrations
 
-Cadence integrates partners behind a single **`PartnerAdapter`** interface so
+Noctua Pay integrates partners behind a single **`PartnerAdapter`** interface so
 the rest of the system depends on ledger events, not partner specifics. Each
 adapter implements: **approve/originate → fund → map webhooks → (Model C) sweep
 support.**
@@ -31,7 +31,7 @@ interface PartnerAdapter {
 Stripe is the money-movement layer for the whole product.
 
 - **Stripe Connect:** merchants onboard as connected accounts so funds route
-  `partner → Stripe → merchant` and Cadence never takes custody. Use hosted
+  `partner → Stripe → merchant` and Noctua Pay never takes custody. Use hosted
   onboarding for KYC.
 - **Checkout + BNPL (Model A):** present **Klarna / Affirm** as payment methods
   on a Stripe Checkout Session. The partner funds; the merchant is paid in full;
@@ -58,7 +58,7 @@ Never `NEXT_PUBLIC_*`.
 - Adapter `kind = BNPL_STRIPE`. `beginCheckout` builds the Stripe Checkout
   Session with Klarna/Affirm enabled; funding confirmation arrives on the Stripe
   webhook.
-- Repayment (Pay-in-4 / monthly) is entirely the partner's; Cadence records the
+- Repayment (Pay-in-4 / monthly) is entirely the partner's; Noctua Pay records the
   funding event and is **not** in the collection path.
 
 ---
@@ -79,14 +79,14 @@ Never `NEXT_PUBLIC_*`.
 - Adapter `kind = EMBEDDED_CAPITAL`. The financer pays the contract
   manufacturer / 3PL **upfront** on day 0.
 - `confirmAdvance` records the `ADVANCE` ledger event when the partner confirms
-  it has paid the maker. Cadence **does not move the advance itself.**
+  it has paid the maker. Noctua Pay **does not move the advance itself.**
 - Ongoing repayment is the **Stripe sweep** (see Model C above) plus the
-  **balloon true-up** at maturity — Cadence's ledger + Stripe drive these, not
+  **balloon true-up** at maturity — Noctua Pay's ledger + Stripe drive these, not
   the partner.
 - Enforceability hooks the partner relies on (see
   [`03-ledger-and-sweep.md`](03-ledger-and-sweep.md)): sales-through-platform
   control, inventory-as-collateral (UCC lien, often a personal guarantee), and
-  Cadence as the automatic system of record for reconciliation.
+  Noctua Pay as the automatic system of record for reconciliation.
 - Secrets: per-partner `*_API_KEY`, `*_WEBHOOK_SECRET`.
 
 ---

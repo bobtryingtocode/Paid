@@ -1,6 +1,6 @@
 # 14 · Bills — PDF generation & email delivery
 
-Service businesses create a bill for a completed job, and Cadence generates a
+Service businesses create a bill for a completed job, and Noctua Pay generates a
 **PDF** and **emails it** to the customer with a link to the hosted payment page
 ([`13`](13-buyer-facing-payments.md)).
 

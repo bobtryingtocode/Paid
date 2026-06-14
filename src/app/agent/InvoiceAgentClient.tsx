@@ -79,7 +79,7 @@ export function InvoiceAgentClient() {
       } as const;
 
       // Prefer the async path (long-running, survives serverless sync caps);
-      // 501 means we're not on Netlify — fall back to the sync route.
+      // 501 (unavailable) falls back to the sync route.
       let res = await fetch("/api/agent/p2p/async", payload);
       if (res.status === 501) res = await fetch("/api/agent/p2p", payload);
 

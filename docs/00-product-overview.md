@@ -41,7 +41,7 @@ wedge; reach for the bank/lender path when a business buyer's process demands it
 
 > **Do not become the lender or the money-mover.**
 
-Holding the money, lending it, or setting the credit terms turns Cadence into a
+Holding the money, lending it, or setting the credit terms turns Noctua Pay into a
 regulated bank / money-transmitter — licensing in all 50 states, huge capital
 and compliance burden.
 
@@ -53,7 +53,7 @@ embedded-capital and BNPL partners who hold:
 - the **underwriting**, and
 - the **risk**.
 
-Cadence earns a **share of the partner's fee**. This is the difference between a
+Noctua Pay earns a **share of the partner's fee**. This is the difference between a
 6-month build and a multi-year regulated-entity slog. Every architectural choice
 in these docs exists to preserve this line. See
 [`08-compliance-notes.md`](08-compliance-notes.md).

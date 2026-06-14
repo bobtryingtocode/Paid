@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 
 /**
  * Stripe Connect onboarding for merchants. Funds route partner → Stripe →
- * merchant via a connected (Express) account, so Cadence never takes custody
+ * merchant via a connected (Express) account, so Noctua Pay never takes custody
  * (see docs/01-architecture.md). This module creates the connected account,
  * mints hosted onboarding links, and reports onboarding status.
  */

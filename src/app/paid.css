@@ -1,40 +1,24 @@
 /* ============================================================
-   Paid — Design System (ported from the Claude Design handoff bundle)
-   Tokens + base + a small set of brand component classes.
-   "Get paid. Let them pay over time." — bone paper, ink, one green.
+   Noctua Pay — Design System (friendly owl theme)
+   The pastel "friendly" Noctua palette + Poppins / IBM Plex Mono, mapped onto
+   the existing brand component tokens. Pipeline green accent, warm paper.
    ============================================================ */
 
-/* ---- Webfonts (self-hosted, variable) ---- */
-@font-face {
-  font-family: 'Hanken Grotesk';
-  font-style: normal;
-  font-weight: 400 800;
-  font-display: swap;
-  src: url('/fonts/HankenGrotesk-latin.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-@font-face {
-  font-family: 'JetBrains Mono';
-  font-style: normal;
-  font-weight: 400 800;
-  font-display: swap;
-  src: url('/fonts/JetBrainsMono-latin.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 :root {
-  /* surfaces */
-  --bone: #F2EFE6; --surface: #FBFAF4; --surface-2: #ECE8DD;
-  /* ink */
-  --ink: #14181A; --ink-70: #3C4346; --ink-50: #5A6166; --ink-30: #9AA0A2;
-  /* paid green */
-  --paid: #0E7A45; --paid-bright: #12A35C; --paid-deep: #0A5E36;
-  /* mint / gold / alert */
-  --mint: #5FD495; --mint-soft: #DCF3E6;
-  --gold: #C9962F; --gold-soft: #F3E6C8;
-  --alert: #B0532A; --alert-soft: #F3E3DD;
+  /* surfaces — friendly paper */
+  --bone: #FBF8F1; --surface: #FFFFFF; --surface-2: #F4EFE3;
+  /* ink — warm */
+  --ink: #1F1B14; --ink-70: #544E40; --ink-50: #8A8474; --ink-30: #B8B2A2;
+  /* pipeline green (brand accent) */
+  --paid: #1A6B4D; --paid-bright: #2E9E70; --paid-deep: #12543B;
+  /* mint / sun / coral */
+  --mint: #2E9E70; --mint-soft: #DCF2E7;
+  --gold: #EBB02A; --gold-soft: #FBEFC6;
+  --alert: #E07A4E; --alert-soft: #FBE3D6;
   /* lines */
-  --line: rgba(20,24,26,.13); --line-2: rgba(20,24,26,.07); --dot-grid: rgba(20,24,26,.035);
+  --line: rgba(31,27,20,.13); --line-2: rgba(31,27,20,.07); --dot-grid: rgba(31,27,20,.035);
 
   /* semantic aliases */
   --bg-page: var(--bone); --surface-card: var(--surface); --surface-sunken: var(--surface-2);
@@ -43,11 +27,11 @@
   --accent: var(--paid); --accent-hover: var(--paid-bright); --highlight: var(--mint);
   --status-pending: var(--gold); --status-pending-fill: var(--gold-soft);
   --status-error: var(--alert); --status-error-fill: var(--alert-soft);
-  --border: var(--line); --border-faint: var(--line-2); --focus-ring: rgba(14,122,69,.30);
+  --border: var(--line); --border-faint: var(--line-2); --focus-ring: rgba(26,107,77,.30);
 
-  /* type */
-  --font-sans: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  /* type — friendly */
+  --font-sans: 'Poppins', Verdana, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
   --fw-medium: 500; --fw-semibold: 600; --fw-bold: 700; --fw-black: 800;
   --fs-display: 56px; --fs-h1: 30px; --fs-h2: 22px; --fs-h3: 17px;
   --fs-body: 15px; --fs-small: 13px; --fs-micro: 11px;
@@ -55,11 +39,11 @@
   --lh-heading: 1.12; --lh-body: 1.5;
   --ls-display: -0.03em; --ls-heading: -0.02em; --ls-eyebrow: 0.12em; --ls-label: 0.06em;
 
-  /* spacing / radius / shadow */
-  --r-sm: 9px; --r-md: 14px; --r-lg: 20px; --r-xl: 28px; --r-pill: 999px;
-  --shadow-1: 0 1px 2px rgba(20,24,26,.05);
-  --shadow-2: 0 1px 2px rgba(20,24,26,.05), 0 10px 30px rgba(20,24,26,.09);
-  --shadow-3: 0 24px 60px rgba(20,24,26,.16);
+  /* spacing / radius / shadow — friendlier rounding + soft warm shadows */
+  --r-sm: 10px; --r-md: 16px; --r-lg: 24px; --r-xl: 34px; --r-pill: 999px;
+  --shadow-1: 0 2px 8px rgba(31,27,20,.06);
+  --shadow-2: 0 12px 30px rgba(31,27,20,.09), 0 3px 8px rgba(31,27,20,.05);
+  --shadow-3: 0 30px 70px rgba(31,27,20,.14), 0 8px 20px rgba(31,27,20,.07);
   --shadow-focus: 0 0 0 3px var(--focus-ring);
   --dot-grid-size: 24px;
   --ease-standard: cubic-bezier(.4,0,.2,1); --ease-stamp: cubic-bezier(.34,1.56,.64,1);
